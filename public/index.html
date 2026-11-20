@@ -72,6 +72,14 @@
     transform: translateY(0);
   }
 
+  #upgradeTowerBtn:disabled { opacity: .85; filter: saturate(.55) brightness(.9); white-space: normal; line-height: 1.15; }
+  @media (max-width: 820px) {
+    #topHud { gap: 6px; padding-left: 8px !important; padding-right: 8px !important; }
+    #topHud .hud-group { gap: 6px; }
+    #topHud .btn { padding: 6px 10px; font-size: .78rem; }
+    #topHud .stat-chip { padding: 4px 8px; font-size: .78rem; }
+  }
+  #autoWaveBtn.auto-on { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border-color: #6ee7b7; font-weight: 800; box-shadow: 0 0 14px rgba(16,185,129,.45); }
   .btn:disabled {
     opacity: 0.42;
     cursor: not-allowed;
@@ -854,7 +862,9 @@
   }
 
   #topHud {
-    height: 56px;
+    min-height: 56px;
+    flex-wrap: wrap;
+    padding-top: 6px !important; padding-bottom: 6px !important;
     background: rgba(13, 18, 30, 0.96);
     border-bottom: 1px solid var(--border-subtle);
     display: flex;
@@ -1427,6 +1437,36 @@
   .rv-actions { position: relative; display: flex; gap: 10px; min-height: 40px; }
   .rv-hint { color: #a5b4cf; font-size: .8rem; letter-spacing: .08em; animation: floaty 2s ease-in-out infinite; }
   @media (max-width: 700px) { .rv-card { width: 140px; height: 230px; } .pk-grid { padding: 18px 12px; } }
+  /* ---- unlock celebration (Epic / Legendary / Mythical) ---- */
+  #rvFx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 6; }
+  #rvFlash { position: absolute; inset: 0; pointer-events: none; z-index: 5; opacity: 0; background: radial-gradient(circle at 50% 46%, var(--fc, #fff) 0%, rgba(255,255,255,0) 68%); }
+  #rvFlash.go { animation: rvFlash .8s ease-out; } @keyframes rvFlash { 0% { opacity: 0; } 12% { opacity: .95; } 100% { opacity: 0; } }
+  .rv-ring { position: absolute; z-index: 5; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 4px solid var(--rc); box-shadow: 0 0 30px var(--rc), inset 0 0 20px var(--rc); pointer-events: none; animation: rvRing 1.1s cubic-bezier(.1,.7,.3,1) forwards; }
+  @keyframes rvRing { 0% { transform: scale(.3); opacity: 1; } 100% { transform: scale(22); opacity: 0; border-width: 1px; } }
+  .rv-stage.rv-shake { animation: rvShake .55s linear; } @keyframes rvShake { 0%,100% { transform: translate(0,0); } 12% { transform: translate(-9px,5px); } 25% { transform: translate(8px,-6px); } 38% { transform: translate(-7px,-4px); } 50% { transform: translate(6px,6px); } 63% { transform: translate(-5px,3px); } 78% { transform: translate(3px,-3px); } }
+  /* card back hints that something big is inside; charging = anticipation before the flip */
+  .rv-card .rv-back.aura { animation: rvAura 1.3s ease-in-out infinite; border-color: var(--rc); } @keyframes rvAura { 50% { box-shadow: 0 0 46px var(--rc), 0 0 90px var(--rc); filter: brightness(1.35); } }
+  .rv-card.charging .rv-back { animation: rvCharge .09s linear infinite; border-color: #fff; box-shadow: 0 0 80px var(--rc), 0 0 140px var(--rc); filter: brightness(1.9); }
+  @keyframes rvCharge { 0% { transform: translate(-3px,1px) rotate(-1deg); } 50% { transform: translate(3px,-2px) rotate(1deg); } 100% { transform: translate(-2px,-1px) rotate(-.5deg); } }
+  .rv-card { transition: scale .45s var(--ease), opacity .4s, filter .4s; }
+  .rv-stage.focus .rv-card:not(.hero) { filter: blur(2px) brightness(.5) saturate(.6); }   /* (opacity can't be used: the entrance animation holds it at 1) */
+  .rv-card.hero { scale: 1.12; z-index: 7; } .rv-card.hero.rare-Mythical { scale: 1.18; }
+  #packReveal .rv-title { transition: opacity .3s; } #packReveal.celebrating .rv-title, #packReveal.celebrating .rv-actions { opacity: 0; }
+  .rv-card.flipped.rare-Mythical .rv-face::after { content: ''; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: color-dodge; opacity: .55; background: conic-gradient(from 0deg, #ff6b6b, #fde047, #34d399, #38bdf8, #a78bfa, #f472b6, #ff6b6b); animation: rvHolo 3s linear infinite; }
+  @keyframes rvHolo { to { filter: hue-rotate(360deg); } }
+  .rv-card.flipped.rare-Legendary .rv-face::after { content: ''; position: absolute; inset: -40% -120%; pointer-events: none; background: linear-gradient(105deg, transparent 42%, rgba(255,255,255,.5) 50%, transparent 58%); animation: rvSheen 2.4s ease-in-out infinite; } @keyframes rvSheen { 0% { transform: translateX(-60%); } 60%,100% { transform: translateX(60%); } }
+  #rvBanner { position: absolute; z-index: 8; left: 50%; top: 3.5%; transform: translateX(-50%); text-align: center; pointer-events: none; opacity: 0; width: min(92vw, 760px); }
+  #rvBanner.on { opacity: 1; } #rvBanner.out { opacity: 0; transition: opacity .6s; }
+  #rvBanner .tier { font: 800 .95rem Cinzel, serif; letter-spacing: .5em; color: var(--rc); text-shadow: 0 0 18px var(--rc); animation: rvTier .7s var(--ease) both; }
+  #rvBanner .nm { font: 900 clamp(1.7rem, 6vw, 3.4rem) Cinzel, serif; letter-spacing: .08em; color: #fff; text-shadow: 0 0 22px var(--rc), 0 4px 14px rgba(0,0,0,.8); margin: 4px 0; }
+  #rvBanner .nm i { font-style: normal; display: inline-block; animation: rvLetter .5s var(--ease) both; }
+  #rvBanner.mythic .nm { filter: drop-shadow(0 0 16px rgba(255,255,255,.55)); text-shadow: none; }
+  #rvBanner.mythic .nm i { background: linear-gradient(90deg, #ff6b6b, #fde047, #34d399, #38bdf8, #a78bfa, #f472b6, #ff6b6b); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; animation: rvLetter .5s var(--ease) both, rvGrad 2.5s linear infinite; }   /* gradient per letter: clipping text through animated children renders nothing */
+  #rvBanner .sub { font: 700 .8rem Inter, sans-serif; letter-spacing: .3em; color: #e2e8f0; opacity: .9; animation: rvTier .9s .5s var(--ease) both; }
+  @keyframes rvTier { from { opacity: 0; transform: translateY(-14px) scale(1.4); } to { opacity: 1; transform: none; } }
+  @keyframes rvLetter { from { opacity: 0; transform: translateY(-40px) scale(1.8); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
+  @keyframes rvGrad { to { background-position: 300% 0; } }
+  @media (prefers-reduced-motion: reduce) { .rv-ring, #rvFlash.go, .rv-stage.rv-shake, .rv-card .rv-back.aura, .rv-card.charging .rv-back { animation: none !important; } }
 </style>
 
 <style id="cinema-css">
@@ -1755,6 +1795,7 @@
 
     <div class="hud-group">
       <button id="nextWaveBtn" class="btn btn-gold">Start Wave 1</button>
+      <button id="autoWaveBtn" class="btn" title="Automatically start each next wave">Auto: OFF</button>
       <button id="diffBtn" class="btn" title="Change difficulty between waves">Difficulty</button>
       <button id="speedBtn" class="btn">1x</button>
       <button id="soundBtn" class="btn">SFX: ON</button>
@@ -1906,6 +1947,7 @@
 
 <div id="packReveal">
   <div class="rv-rays" id="rvRays"></div>
+  <canvas id="rvFx"></canvas><div id="rvFlash"></div><div id="rvBanner"></div>
   <div class="rv-title" id="rvTitle"></div>
   <div class="rv-stage" id="rvStage"></div>
   <div class="rv-actions" id="rvActions"></div>
@@ -2090,6 +2132,7 @@
       cardFlip: c => { noise(c, { ft: 'bandpass', f0: 2200, q: 3, dur: 0.07, v: 0.12 }); tone(c, { f0: 320, f1: 520, dur: 0.09, v: 0.05, type: 'triangle' }); },
       revealCommon: c => { bell(c, 523, 0, 0.06, 0.4); },
       revealRare: c => { bell(c, 659, 0, 0.07, 0.5); bell(c, 880, 0.1, 0.07, 0.6); },
+      revealCharge: c => { tone(c, { f0: 70, f1: 900, dur: 1.15, v: 0.1, type: 'sawtooth', lp: 1200 }); noise(c, { ft: 'highpass', f0: 600, f1: 7000, dur: 1.15, v: 0.07 }); },
       revealEpic: c => { [523, 659, 784, 1047].forEach((f, i) => bell(c, f, i * 0.08, 0.07, 0.7)); noise(c, { ft: 'highpass', f0: 3000, dur: 0.3, v: 0.05, at: 0.2 }); },
       revealLegend: c => { [392, 523, 659, 784, 1047, 1319].forEach((f, i) => bell(c, f, i * 0.07, 0.08, 0.9)); tone(c, { f0: 110, f1: 82, dur: 1.0, v: 0.14 }); },
       revealMythic: c => { [262, 330, 392, 523, 659, 784, 1047, 1568].forEach((f, i) => bell(c, f, i * 0.07, 0.08, 1.2)); tone(c, { f0: 65, f1: 32, dur: 1.6, v: 0.3 }); noise(c, { f0: 4000, f1: 200, dur: 1.2, v: 0.12 }); [0.5, 0.65, 0.8].forEach((a, i) => bell(c, 2093 + i * 400, a, 0.05, 1.0)); },
@@ -2394,7 +2437,7 @@
   // --------------------------------------------------------------------------
   // 2C. UNIQUE IDs & UNLOCK PRICES (rarity + strength)
   // --------------------------------------------------------------------------
-  const UNLOCK_BASE = { Common: 150, Rare: 350, Epic: 750, Legendary: 1500, Mythical: 2500 };
+  const UNLOCK_BASE = { Common: 150, Rare: 350, Epic: 820, Legendary: 1750, Mythical: 3000 };
   const STARTER_IDS = ['archer', 'cannon', 'frost', 'banner', 'sabertooth'];
   const SQUAD_LIMIT = 10;
   TOWER_TYPES.forEach((d, i) => { d.uid = 'SC-' + String(i + 1).padStart(3, '0'); });
@@ -7172,8 +7215,10 @@
     } else {
       const mult = t.tier === 1 ? 1.25 : (t.tier === 2 ? 1.65 : 2.15);
       const upgCost = Math.round(def.cost * mult);
-      upgBtn.textContent = `Upgrade (${upgCost}g)`;
-      upgBtn.disabled = game.gold < upgCost;
+      const missing = upgCost - Math.floor(game.gold);
+      upgBtn.textContent = missing > 0 ? `Upgrade (${upgCost}g) \u2013 need ${missing}g more` : `Upgrade (${upgCost}g)`;
+      upgBtn.title = `Upgrade cost: ${upgCost} gold`;
+      upgBtn.disabled = missing > 0;
     }
 
     const sellVal = Math.round(t.totalInvested * 0.75);
@@ -7398,6 +7443,31 @@
 
   document.getElementById('nextWaveBtn').addEventListener('click', () => startNextWave());
 
+  // ---- Auto-wave: starts each next wave shortly after the previous one ends. Lives inside the sim step so it is deterministic in multiplayer. ----
+  const AUTO_WAVE_DELAY = 2;                               // seconds of game time between waves
+  function syncAutoBtn() {
+    const b = document.getElementById('autoWaveBtn'); if (!b) return;
+    const on = !!(game && game.autoWave);
+    b.textContent = 'Auto: ' + (on ? 'ON' : 'OFF'); b.classList.toggle('auto-on', on);
+  }
+  const _usAuto = updateSimulation;
+  updateSimulation = function () {
+    _usAuto.apply(this, arguments);
+    const g = game; if (!g || !g.autoWave || g.over) return;
+    if (g.waveActive) { g.autoWaveT = 0; return; }
+    g.autoWaveT = (g.autoWaveT || 0) + SIM_STEP;
+    if (g.autoWaveT >= AUTO_WAVE_DELAY) {
+      g.autoWaveT = 0;
+      const was = MPCORE.executing; MPCORE.executing = true;   // part of the shared sim: every peer starts the wave itself on this tick (no network command)
+      try { startNextWave(); } finally { MPCORE.executing = was; }
+    }
+  };
+  document.getElementById('autoWaveBtn').addEventListener('click', () => {
+    if (!game || game.over) return;
+    if (MPCORE.active) { MPCORE.toggleAuto(); return; }
+    game.autoWave = !game.autoWave; game.autoWaveT = 0; syncAutoBtn();
+  });
+
   document.getElementById('speedBtn').addEventListener('click', () => {
     if (!game) return;
     if (MPCORE.active) { MPCORE.cycleSpeed(); return; }
@@ -7618,10 +7688,10 @@
 
   // ---- packs ----
   const PACKS = [
-    { id: 'bronze', name: 'Recruit Pack', cost: 300, cards: 1, guarantee: null, odds: { Common: 60, Rare: 31, Epic: 7.5, Legendary: 1.4, Mythical: 0.1 }, pc: '#b45309', pc2: '#fcd34d', blurb: '1 card' },
-    { id: 'silver', name: 'Veteran Pack', cost: 900, cards: 2, guarantee: 'Rare', odds: { Common: 28, Rare: 46, Epic: 20, Legendary: 5, Mythical: 1 }, pc: '#475569', pc2: '#e2e8f0', blurb: '2 cards \u2022 1 Rare or better' },
-    { id: 'gold', name: 'Champion Pack', cost: 2000, cards: 3, guarantee: 'Epic', odds: { Common: 0, Rare: 38, Epic: 40, Legendary: 18, Mythical: 4 }, pc: '#b45309', pc2: '#fde047', blurb: '3 cards \u2022 1 Epic or better' },
-    { id: 'mythic', name: 'Mythic Pack', cost: 4200, cards: 3, guarantee: 'Legendary', odds: { Common: 0, Rare: 0, Epic: 34, Legendary: 46, Mythical: 20 }, pc: '#9f1239', pc2: '#fb7185', blurb: '3 cards \u2022 1 Legendary or better' }
+    { id: 'bronze', name: 'Recruit Pack', cost: 300, cards: 1, guarantee: null, odds: { Common: 66, Rare: 27.5, Epic: 5.4, Legendary: 1, Mythical: 0.1 }, pc: '#b45309', pc2: '#fcd34d', blurb: '1 card' },
+    { id: 'silver', name: 'Veteran Pack', cost: 900, cards: 2, guarantee: 'Rare', odds: { Common: 33, Rare: 47, Epic: 16, Legendary: 3.4, Mythical: 0.6 }, pc: '#475569', pc2: '#e2e8f0', blurb: '2 cards \u2022 1 Rare or better' },
+    { id: 'gold', name: 'Champion Pack', cost: 2000, cards: 3, guarantee: 'Epic', odds: { Common: 0, Rare: 45, Epic: 38, Legendary: 14.5, Mythical: 2.5 }, pc: '#b45309', pc2: '#fde047', blurb: '3 cards \u2022 1 Epic or better' },
+    { id: 'mythic', name: 'Mythic Pack', cost: 4200, cards: 3, guarantee: 'Legendary', odds: { Common: 0, Rare: 0, Epic: 42, Legendary: 44, Mythical: 14 }, pc: '#9f1239', pc2: '#fb7185', blurb: '3 cards \u2022 1 Legendary or better' }
   ];
   const RANK = { Common: 0, Rare: 1, Epic: 2, Legendary: 3, Mythical: 4 };
   const PACK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M4 20h16M6 20V9l3-2 3 2 3-2 3 2v11M9 13h6M12 4v3"/></svg>';
@@ -7675,9 +7745,49 @@
     PlayerData.save(); renderCoinCounters(); updatePackBadge(); PlayerData.evaluate(null);
     showReveal(p, pulled);
   }
+  // ---- unlock celebration: flash, shockwave rings, particle bursts, screen shake and a name banner; scaled by rarity ----
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const FX_OK = !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const fx = { ps: [], raf: 0 };
+  function fxBurst(x, y, cols, n, spd) {
+    for (let i = 0; i < n; i++) { const a = Math.random() * 6.2832, v = spd * (0.3 + Math.random()); fx.ps.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - spd * 0.2, g: 650, life: 1, dec: 0.45 + Math.random() * 0.7, r: 1.8 + Math.random() * 3.6, c: cols[i % cols.length] }); }
+    fxRun();
+  }
+  function fxRain(cols, n, dur) {                                                              // embers falling from the top of the screen
+    const w = innerWidth, t0 = performance.now();
+    (function drip() { const k = Math.min(n, 6); for (let i = 0; i < k; i++) fx.ps.push({ x: Math.random() * w, y: -10, vx: (Math.random() - 0.5) * 40, vy: 60 + Math.random() * 120, g: 80, life: 1, dec: 0.28 + Math.random() * 0.3, r: 1.5 + Math.random() * 3, c: cols[(Math.random() * cols.length) | 0] }); fxRun(); if (performance.now() - t0 < dur) setTimeout(drip, 40); })();
+  }
+  function fxRun() {
+    if (fx.raf) return; const cv = document.getElementById('rvFx'), ctx = cv.getContext('2d'); cv.width = innerWidth; cv.height = innerHeight; let last = performance.now();
+    const step = t => {
+      const dt = Math.min(0.05, (t - last) / 1000); last = t; ctx.clearRect(0, 0, cv.width, cv.height); ctx.globalCompositeOperation = 'lighter';
+      for (let i = fx.ps.length - 1; i >= 0; i--) { const q = fx.ps[i]; q.vy += q.g * dt; q.x += q.vx * dt; q.y += q.vy * dt; q.vx *= 0.992; q.life -= q.dec * dt; if (q.life <= 0) { fx.ps.splice(i, 1); continue; } ctx.globalAlpha = Math.min(1, q.life * 1.4); ctx.fillStyle = q.c; ctx.beginPath(); ctx.arc(q.x, q.y, q.r, 0, 6.2832); ctx.fill(); }
+      if (fx.ps.length) fx.raf = requestAnimationFrame(step); else { fx.raf = 0; ctx.clearRect(0, 0, cv.width, cv.height); }
+    };
+    fx.raf = requestAnimationFrame(step);
+  }
+  async function celebrate(root, stage, el, d, r, hype) {                                      // hype: 1 = duplicate, 2 = Epic, 3 = Legendary, 4 = Mythical
+    const col = RARITY_COLORS[d.rarity], rb = el.getBoundingClientRect(), cx = rb.left + rb.width / 2, cy = rb.top + rb.height / 2;
+    const rainbow = ['#ff6b6b', '#fde047', '#34d399', '#38bdf8', '#a78bfa', '#f472b6'], cols = hype >= 4 ? rainbow.concat(['#ffffff']) : [col, '#ffffff', col, '#fde68a'];
+    const flash = document.getElementById('rvFlash'), banner = document.getElementById('rvBanner');
+    const doFlash = c => { flash.style.setProperty('--fc', c); flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go'); };
+    const ring = (delay, c) => setTimeout(() => { const e = document.createElement('div'); e.className = 'rv-ring'; e.style.left = cx + 'px'; e.style.top = cy + 'px'; e.style.setProperty('--rc', c || col); root.appendChild(e); setTimeout(() => e.remove(), 1200); }, delay);
+    doFlash(hype >= 4 ? '#ffffff' : col); ring(0); fxBurst(cx, cy, cols, hype >= 4 ? 170 : hype === 3 ? 110 : hype === 2 ? 55 : 24, hype >= 4 ? 620 : hype === 3 ? 520 : 380);
+    if (hype >= 3) { stage.classList.remove('rv-shake'); void stage.offsetWidth; stage.classList.add('rv-shake'); ring(260, '#ffffff'); setTimeout(() => fxBurst(cx, cy, cols, hype >= 4 ? 120 : 70, 300), 320); fxRain(cols, hype >= 4 ? 90 : 50, hype >= 4 ? 2600 : 1600); }
+    if (hype >= 4) { setTimeout(() => doFlash('#ffffff'), 420); setTimeout(() => doFlash(col), 800); ring(560, '#fde047'); }
+    // name banner for characters you actually unlocked
+    if (hype >= 2) {
+      const tierLbl = d.rarity.toUpperCase();
+      banner.className = hype >= 4 ? 'mythic' : ''; banner.style.setProperty('--rc', col);
+      banner.innerHTML = `<div class="tier">${tierLbl}</div><div class="nm">${[...d.name].map((ch, i) => `<i style="animation-delay:${0.15 + i * 0.035}s">${ch === ' ' ? '&nbsp;' : ch.replace('<', '')}</i>`).join('')}</div><div class="sub">${r.dup ? 'DUPLICATE \u2022 +' + (r.refund || 0) + ' COINS' : 'NEW CHARACTER UNLOCKED'}</div>`;
+      void banner.offsetWidth; banner.classList.add('on'); banner.classList.remove('out');
+    }
+    await sleep(hype >= 4 ? 2900 : hype === 3 ? 2300 : hype === 2 ? 1200 : 500);
+    banner.classList.add('out'); await sleep(350);
+  }
   function showReveal(p, pulled) {
     const root = document.getElementById('packReveal'), stage = document.getElementById('rvStage'), actions = document.getElementById('rvActions'), title = document.getElementById('rvTitle'), rays = document.getElementById('rvRays');
-    root.classList.add('visible'); rays.classList.remove('on'); stage.innerHTML = ''; actions.innerHTML = ''; title.textContent = p.name.toUpperCase();
+    root._busy = false; root.classList.remove('celebrating'); root.classList.add('visible'); rays.classList.remove('on'); stage.innerHTML = ''; actions.innerHTML = ''; title.textContent = p.name.toUpperCase();
     const pk = document.createElement('div'); pk.className = 'rv-pack'; pk.style.setProperty('--pc', p.pc); pk.style.setProperty('--pc2', p.pc2); pk.innerHTML = `<div class="pk-art">${PACK_ICON}<b>${p.name.split(' ')[0].toUpperCase()}</b></div>`; stage.appendChild(pk);
     actions.innerHTML = '<div class="rv-hint">TAP THE PACK TO OPEN</div>'; sfx.play('packShake');
     let opened = false;
@@ -7690,16 +7800,30 @@
           const d = r.def, el = document.createElement('div'); el.className = 'rv-card rare-' + d.rarity; el.style.animationDelay = i * 0.12 + 's'; el.style.setProperty('--rc', RARITY_COLORS[d.rarity]);
           el.innerHTML = `<div class="rv-inner"><div class="rv-back">${PACK_ICON}</div><div class="rv-face"><canvas width="200" height="240"></canvas><div class="rv-tag ${r.dup ? 'dup' : 'new'}">${r.dup ? 'DUPLICATE' : 'NEW!'}</div><div class="rv-info"><b>${d.name}</b><span class="rarity-badge rar-${d.rarity}">${d.rarity}</span>${r.dup ? `<div style="font-size:.7rem;color:#fde047;margin-top:3px;">+${r.refund} coins</div>` : `<div style="font-size:.7rem;color:#6ee7b7;margin-top:3px;">Added to collection</div>`}</div></div></div>`;
           el.querySelector('canvas').getContext('2d').drawImage(getPortraitSprite(d, false), 0, 0, 200, 240);
-          el.addEventListener('click', () => {
-            if (el.classList.contains('flipped')) return; el.classList.add('flipped'); sfx.play('cardFlip'); flipped++;
+          el._rar = d.rarity;
+          if (RANK[d.rarity] >= 3) el.querySelector('.rv-back').classList.add('aura');       // glowing back: something big is in there
+          el._reveal = async () => {
+            if (el.classList.contains('flipped') || el._going) return;
+            el._going = true;
+            while (root._busy) await sleep(60);                                                // one cinematic at a time; taps queue up
+            root._busy = true;
+            const tier = RANK[d.rarity], big = tier >= 2 && FX_OK, hype = big ? (r.dup ? 1 : tier) : 0;
+            if (hype >= 2) {                                                                   // anticipation: charge up before the flip
+              root.classList.add('celebrating'); stage.classList.add('focus'); el.classList.add('hero', 'charging'); sfx.play('revealCharge');
+              await sleep(hype >= 3 ? 1150 : 480); el.classList.remove('charging');
+            }
+            el.classList.add('flipped'); sfx.play('cardFlip');
             setTimeout(() => sfx.play('reveal' + (d.rarity === 'Legendary' ? 'Legend' : d.rarity === 'Mythical' ? 'Mythic' : d.rarity)), 250);
-            if (RANK[d.rarity] >= 3) { rays.style.setProperty('--x', 1); rays.classList.add('on'); rays.style.filter = `hue-rotate(${d.rarity === 'Mythical' ? 300 : 0}deg)`; }
+            if (tier >= 3) { rays.style.setProperty('--x', 1); rays.classList.add('on'); rays.style.filter = `hue-rotate(${d.rarity === 'Mythical' ? 300 : 0}deg)`; }
+            if (hype) await celebrate(root, stage, el, d, r, hype);
+            root.classList.remove('celebrating'); stage.classList.remove('focus'); el.classList.remove('hero'); root._busy = false; flipped++;
             if (flipped === pulled.length) { title.textContent = RANK[best] >= 3 ? (best === 'Mythical' ? 'MYTHICAL PULL!' : 'LEGENDARY PULL!') : 'PACK OPENED'; showActions(p); }
-          });
+          };
+          el.addEventListener('click', () => el._reveal());
           stage.appendChild(el);
         });
         actions.innerHTML = '<div class="rv-hint">TAP A CARD TO FLIP IT</div>';
-        const all = document.createElement('button'); all.className = 'btn'; all.textContent = 'Reveal all'; all.addEventListener('click', () => { [...stage.children].forEach((c, i) => setTimeout(() => c.click(), i * 350)); }); actions.appendChild(all);
+        const all = document.createElement('button'); all.className = 'btn'; all.textContent = 'Reveal all'; all.addEventListener('click', async () => { all.disabled = true; const cs = [...stage.children].filter(c => c._reveal && !c.classList.contains('flipped')).sort((a, b) => RANK[a._rar] - RANK[b._rar]); for (const c of cs) { await c._reveal(); await sleep(220); } }); actions.appendChild(all);   // best card last
       }, 480);
     });
   }
@@ -7986,6 +8110,8 @@
       const $ = id => document.getElementById(id);
       ['speedBtn', 'pauseBtn'].forEach(id => { const b = $(id); if (b) { b.disabled = false; b.style.opacity = ''; b.style.pointerEvents = ''; } });
       const nb = $('nextWaveBtn'); if (nb) { nb.title = ''; nb.disabled = false; }
+      const ab = $('autoWaveBtn'); if (ab) { ab.disabled = false; ab.title = 'Automatically start each next wave'; }
+      syncAutoBtn();
       const ip = $('inspectorPanel'); if (ip) { ip.classList.remove('mp-foreign'); ip.removeAttribute('data-owner'); }
       try { updateHud(); } catch (e) { /* no game */ }
     };
@@ -7996,6 +8122,10 @@
 
     M.stepTick = function () { game.curP = -1; try { updateSimulation(SIM_STEP); } finally { game.curP = this.me; } this.tick++; };
 
+    M.toggleAuto = function () {
+      if (this.cfg.hostSlot !== this.me) { showToast('Only the host can change auto-wave.'); return; }
+      this.send({ t: 'auto', v: game && game.autoWave ? 0 : 1 });
+    };
     M.cycleSpeed = function () {
       if (this.cfg.hostSlot !== this.me) { showToast('Only the host can change the speed.'); return; }
       this.send({ t: 'speed', v: this.speed === 1 ? 2 : (this.speed === 2 ? 3 : 1) });
@@ -8022,6 +8152,7 @@
           doPlace(def, { x: c.x, y: c.y }, c.p); return { ok: true };
         }
         if (c.t === 'wave') { if (game.waveActive) return rej('wave'); startNextWave(); return { ok: true }; }
+        if (c.t === 'auto') { game.autoWave = !!c.v; game.autoWaveT = 0; syncAutoBtn(); return { ok: true }; }
         if (c.t === 'speed') {                                  // room-wide game speed (host only). Turns stay 6 ticks; the server sends them faster and clients play them faster.
           if (c.v !== 1 && c.v !== 2 && c.v !== 3) return rej('speed');
           this.speed = c.v; const sb = document.getElementById('speedBtn'); if (sb) sb.textContent = c.v + 'x'; return { ok: true };
@@ -8103,7 +8234,8 @@
       pb.disabled = true; pb.style.opacity = '.4';
       const host = this.cfg.hostSlot === this.me; sb.disabled = !host; sb.style.opacity = host ? '' : '.4'; sb.title = host ? 'Game speed for everyone' : 'Only the host can change the speed'; sb.textContent = this.speed + 'x';
       if (this.cfg.hostSlot !== this.me) { nb.disabled = true; nb.title = 'Only the host can start waves'; }
-      else { nb.title = ''; if (game) nb.disabled = !!(game.waveActive || game.over); }   // a newly promoted host must get the button back
+      else { nb.title = ''; if (game) nb.disabled = !!(game.waveActive || game.over); }
+      const ab = document.getElementById('autoWaveBtn'); if (ab) { const host = this.cfg.hostSlot === this.me; ab.disabled = !host; ab.title = host ? 'Automatically start each next wave (for everyone)' : 'Only the host can change auto-wave'; syncAutoBtn(); }   // a newly promoted host must get the button back
     };
 
     // UI code reads game.gold, but while the shared sim steps (or while a teammate's command is applied) game.gold means THAT player's purse.
@@ -8137,7 +8269,7 @@
       const p = game.curP; game.curP = src.owner; try { return _dmg.apply(this, arguments); } finally { game.curP = p; }
     };
     const _sm = startMatch;
-    startMatch = function () { if (M.active && !M.starting) { if (M.onLeaveRequest) M.onLeaveRequest(); return; } const r = _sm.apply(this, arguments); if (!M.active) M.restoreUi(); return r; };
+    startMatch = function () { if (M.active && !M.starting) { if (M.onLeaveRequest) M.onLeaveRequest(); return; } const r = _sm.apply(this, arguments); if (!M.active) M.restoreUi(); syncAutoBtn(); return r; };
     const _ri = asMe(refreshInspector);
     refreshInspector = function () {
       _ri.apply(this, arguments);

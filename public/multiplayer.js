@@ -218,4 +218,7 @@
     if (code) { const t = setInterval(async () => { if (sock && sock.connected && session.pid) { clearInterval(t); open('menu'); const r = await rpc('room:join', { code }); if (r.ok) { view = 'lobby'; render(); } else { msg = r.error; render(); } history.replaceState(null, '', location.pathname); } }, 200); }
   }
   window.__MP = { get room() { return room; }, get session() { return session; }, connect, open, rpc, get sock() { return sock; } };
+
+  // keep the in-match overlays just below the top bar even when it wraps onto several rows (small screens)
+  try { const th = document.getElementById('topHud'); if (th && window.ResizeObserver) new ResizeObserver(() => document.documentElement.style.setProperty('--hudbottom', (th.offsetHeight + 10) + 'px')).observe(th); } catch (e) { /* cosmetic only */ }
 })();
