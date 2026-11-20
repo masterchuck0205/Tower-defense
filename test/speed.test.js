@@ -1,0 +1,33 @@
+const { FakeServer } = require('./fakeio');
+const { attach } = require('../lib/rooms');
+const { createStore } = require('../lib/store');
+const { createEngine } = require('../lib/engine-host');
+const H = require('path').join(__dirname, '..', 'public', 'index.html');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let fails = 0; const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fails++; };
+(async () => {
+  const squad = createEngine(H).__SC.TOWER_TYPES.slice(0, 10).map(t => t.id);
+  const store = createStore({}); await store.init(); const io = new FakeServer();
+  const mgr = attach(io, { store, htmlPath: H, opts: { minPlayers: 2, turnMs: 60 } });
+  const mk = async n => { const s = io.connect({ name: n, squad, avatar: squad[0] }); await s.ready; await sleep(5); s.pid = s.last('welcome').pid; return s; };
+  const A = await mk('Al'), B = await mk('Bo'); const { code } = await A.send('room:create', {}); await B.send('room:join', { code }); await B.send('room:ready', { ready: true }); await A.send('room:start', {});
+  const room = mgr.rooms.get(code);
+  const C = createEngine(H).__MPCORE; C.begin({ ...B.last('game:start').cfg }); let desync = false; C.onDesync = () => { desync = true; };
+  B.client.on('game:turn', t => C.addTurn(t.n, t.cmds, t.h));
+  const pump = () => { let g = 0; while (C.tick < C.known * 6 && g++ < 1e6) if (!C.advance()) break; };
+  const rate = async () => { const a = room.log.total; await sleep(600); return room.log.total - a; };
+  const r1 = await rate(); 
+  B.fire('game:cmd', { seq: 1, c: { t: 'speed', v: 3 } }); await sleep(100);
+  ok(B.last('game:reject') && B.last('game:reject').why === 'host', 'non-host speed change rejected');
+  A.fire('game:cmd', { seq: 1, c: { t: 'speed', v: 9 } }); await sleep(100); ok(room.engine.__MPCORE.speed === 1, 'invalid speed value ignored');
+  A.fire('game:cmd', { seq: 2, c: { t: 'speed', v: 2 } }); await sleep(150);
+  ok(room.engine.__MPCORE.speed === 2, 'host sets 2x');
+  const r2 = await rate(); ok(r2 > r1 * 1.6, `turns ~2x faster (${r1} -> ${r2} per 600ms)`);
+  A.fire('game:cmd', { seq: 3, c: { t: 'speed', v: 3 } }); await sleep(150); const r3 = await rate(); ok(r3 > r1 * 2.4, `3x faster (${r3})`);
+  A.fire('game:cmd', { seq: 4, c: { t: 'speed', v: 1 } }); await sleep(150); const r4 = await rate(); ok(Math.abs(r4 - r1) <= 3, `back to 1x (${r4})`);
+  pump(); ok(!desync && C.speed === 1, 'client replays speed commands without desync, speed=' + C.speed);
+  // late joiner replays log containing speed commands
+  const C2 = createEngine(H).__MPCORE; const lg = room.logPayload(room.find(B.pid)); C2.begin(lg.cfg); C2.known = lg.total; C2.cmds = lg.cmds;
+  let g = 0; while (C2.tick < C2.known * 6 && g++ < 1e6) if (!C2.advance()) break; ok(C2.speed === 1 && C2.tick === C2.known * 6, 'full-log replay reaches same speed state');
+  console.log(fails ? 'FAILS ' + fails : 'ALL OK'); process.exit(fails ? 1 : 0);
+})();
