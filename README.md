@@ -86,5 +86,5 @@ Good to know:
 
 * Unlocked troops/coins stay in each player's own browser save; the server checks that a placed troop is in the player's declared 10-troop squad, not that it is unlocked.
 * Match coin rewards are credited by each player's own browser to their own save.
-* No speed change or pause in multiplayer; only the host starts waves.
+* Only the host can start waves and change the game speed (1x/2x/3x, applies to everyone). There is no pause in multiplayer.
 * Friend requests are stored and can be accepted; inviting a friend into a room is not built yet.
