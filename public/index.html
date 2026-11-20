@@ -7955,16 +7955,16 @@
   // commands on the same tick, so every player sees identical enemies, health and waves.
   // ==========================================================================
   const MPCORE = (() => {
-    const TT = 6, BUF = 1;                       // ticks per turn (6 x 1/60 s = 100 ms), jitter buffer in turns
+    const TT = 6;                                   // ticks per turn (6 x 1/60 s = 100 ms); the jitter buffer (turns) is adaptive, see M.buf
     const M = {
       TT, active: false, cfg: null, me: -1, tick: 0, known: 0, cmds: {}, hashes: {}, ended: false, executing: false, starting: false,
-      players: [], acc: 0, desyncs: 0, verified: 0, trace: {}, onSend: null, onDesync: null, onProgress: null, onLeaveRequest: null, _bd: null,
+      players: [], acc: 0, desyncs: 0, verified: 0, trace: {}, starved: 0, wasStarved: false, onSend: null, onDesync: null, onProgress: null, onLeaveRequest: null, _bd: null,
       slotColor: ['#38bdf8', '#fb923c', '#a3e635', '#e879f9']
     };
 
     M.begin = function (cfg) {
       this.cfg = cfg; this.players = cfg.players; this.me = cfg.me;
-      this.tick = 0; this.known = 0; this.cmds = {}; this.hashes = {}; this.ended = false; this.acc = 0; this.trace = {};
+      this.tick = 0; this.known = 0; this.cmds = {}; this.hashes = {}; this.ended = false; this.acc = 0; this.trace = {}; this.starved = 0; this.wasStarved = false;
       if (this._bd === null) { try { this._bd = saveState.difficulty; } catch (e) { this._bd = undefined; } }
       try { saveState.difficulty = cfg.diff; } catch (e) { /* not ready */ }
       this.starting = true; startMatch(cfg.map, cfg.mode); this.starting = false;
@@ -7981,8 +7981,16 @@
       updateHud();
     };
 
+    // Undo everything multiplayer did to the shared UI, so single-player (and the next match) works normally again.
+    M.restoreUi = function () {
+      const $ = id => document.getElementById(id);
+      ['speedBtn', 'pauseBtn'].forEach(id => { const b = $(id); if (b) { b.disabled = false; b.style.opacity = ''; b.style.pointerEvents = ''; } });
+      const nb = $('nextWaveBtn'); if (nb) { nb.title = ''; nb.disabled = false; }
+      const ip = $('inspectorPanel'); if (ip) { ip.classList.remove('mp-foreign'); ip.removeAttribute('data-owner'); }
+      try { updateHud(); } catch (e) { /* no game */ }
+    };
     M.end = function () {
-      this.active = false; this.cfg = null;
+      this.active = false; this.cfg = null; this.restoreUi();
       if (this._bd !== null) { try { if (this._bd !== undefined) saveState.difficulty = this._bd; persistSave(); } catch (e) { /* ignore */ } this._bd = null; }
     };
 
@@ -8065,8 +8073,10 @@
     };
     M.frame = function (dt) {
       if (!game) return;
-      const limit = this.ended ? this.known * TT : Math.max(0, (this.known - BUF) * TT), lag = limit - this.tick;
-      if (lag <= 0) { this.acc = 0; return; }
+      // Jitter buffer: stay 2+ turns behind the newest turn so a late packet doesn't freeze the picture; widen it (up to 5) if stalls keep happening.
+      const buf = Math.min(5, 2 + (this.starved >> 2)), limit = this.ended ? this.known * TT : Math.max(0, (this.known - buf) * TT), lag = limit - this.tick;
+      if (lag <= 0) { this.acc = 0; if (!this.ended && !this.wasStarved) { this.wasStarved = true; this.starved++; } if (this.onProgress) this.onProgress(0); return; }
+      this.wasStarved = false;
       this.acc = Math.min(this.acc + dt, 0.25);
       let steps = Math.floor(this.acc / SIM_STEP); this.acc -= steps * SIM_STEP;
       if (lag > 24) {                                         // behind (joining late / reconnecting): catch up under a CPU budget
@@ -8082,7 +8092,8 @@
       if (!this.active) return;
       const sb = document.getElementById('speedBtn'), pb = document.getElementById('pauseBtn'), nb = document.getElementById('nextWaveBtn');
       sb.disabled = true; pb.disabled = true; sb.style.opacity = '.4'; pb.style.opacity = '.4';
-      if (this.cfg.hostSlot !== this.me) nb.disabled = true;
+      if (this.cfg.hostSlot !== this.me) { nb.disabled = true; nb.title = 'Only the host can start waves'; }
+      else { nb.title = ''; if (game) nb.disabled = !!(game.waveActive || game.over); }   // a newly promoted host must get the button back
     };
 
     const _uh = updateHud; updateHud = function () { _uh.apply(this, arguments); M.hudFix(); };
@@ -8108,11 +8119,12 @@
       const p = game.curP; game.curP = src.owner; try { return _dmg.apply(this, arguments); } finally { game.curP = p; }
     };
     const _sm = startMatch;
-    startMatch = function () { if (M.active && !M.starting) { if (M.onLeaveRequest) M.onLeaveRequest(); return; } return _sm.apply(this, arguments); };
+    startMatch = function () { if (M.active && !M.starting) { if (M.onLeaveRequest) M.onLeaveRequest(); return; } const r = _sm.apply(this, arguments); if (!M.active) M.restoreUi(); return r; };
     const _ri = refreshInspector;
     refreshInspector = function () {
       _ri.apply(this, arguments);
-      if (!M.active || !game || !game.inspectedTower) return;
+      if (!M.active) { const ip = document.getElementById('inspectorPanel'); if (ip) ip.classList.remove('mp-foreign'); return; }
+      if (!game || !game.inspectedTower) return;
       const t = game.inspectedTower, pl = M.players.find(p => p.slot === t.owner), panel = document.getElementById('inspectorPanel');
       panel.classList.toggle('mp-foreign', t.owner !== M.me); panel.setAttribute('data-owner', pl ? pl.name : '');
     };

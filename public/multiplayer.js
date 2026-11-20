@@ -25,7 +25,7 @@
   }
 
   // ---------- state ----------
-  let sock = null, seq = 0, room = null, view = 'menu', msg = '', msgOk = false, syncing = false, resyncs = 0, lastSync = 0, friends = { friends: [], requests: [] }, netState = 'idle', pickAvatar = false;
+  let syncTimer = null, verifiedAtSync = 0, sock = null, seq = 0, room = null, view = 'menu', msg = '', msgOk = false, syncing = false, resyncs = 0, lastSync = 0, friends = { friends: [], requests: [] }, netState = 'idle', pickAvatar = false;
   const screen = document.createElement('section'); screen.id = 'mpScreen'; document.body.appendChild(screen);
   const hud = document.createElement('div'); hud.id = 'mpHud'; document.body.appendChild(hud);
   const bossEl = document.createElement('div'); bossEl.id = 'mpBoss'; document.body.appendChild(bossEl);
@@ -43,7 +43,7 @@
     netState = 'connecting';
     sock = window.io({ auth: cb => cb({ pid: session.pid, token: session.token, name: session.name, avatar: session.avatar, squad: mySquad() }) });
     sock.on('connect', () => { netState = 'online'; seq = 0; netEl.classList.remove('on'); render(); });
-    sock.on('connect_error', () => { netState = 'retry'; render(); });
+    sock.on('connect_error', e => { netState = 'retry'; if (e && e.message && !/xhr|websocket|timeout|poll/i.test(e.message)) msg = e.message; render(); });
     sock.on('disconnect', () => {
       netState = 'retry'; render();
       if (CORE.active && SC.game && !SC.game.over) { netEl.innerHTML = 'Connection lost &mdash; reconnecting&hellip;<small>The match keeps running. You will rejoin automatically.</small>'; netEl.classList.add('on'); }
@@ -51,32 +51,44 @@
     sock.on('fatal', d => { msg = d.error || 'Connection refused.'; netState = 'error'; render(); });
     sock.on('welcome', d => {
       session.pid = d.pid; if (d.token) session.token = d.token; session.name = d.name; session.avatar = d.avatar; saveSession();
-      if (d.inRoom) { open('lobby'); }                              // resumed an existing room; a game:log follows if a match is running
+      if (CORE.active) { if (d.inRoom && SC.game && !SC.game.over) requestSync('gap'); }          // dropped mid-match: fetch only the missed turns
+      else if (d.inRoom && d.state === 'playing') requestSync('full');                            // page was refreshed mid-match: rebuild it from the log
+      else if (d.inRoom) open('lobby');
       refreshFriends(); render();
     });
     sock.on('room:state', s => {
       const was = room; room = s;
       if (CORE.active && CORE.cfg) { const h = s.players.find(p => p.pid === s.hostPid); if (h && h.slot >= 0) CORE.cfg.hostSlot = h.slot; SC.game && SC.game.waveActive !== undefined && CORE.hudFix(); }
+      if (s.state === 'playing' && !CORE.active && me()) requestSync('full');
       if (s.state === 'lobby' && was && was.state !== 'lobby' && !CORE.active) open('lobby');
       if (screen.classList.contains('open')) { view = 'lobby'; render(); }
       else if (view !== 'lobby' && !CORE.active && s.state === 'lobby') open('lobby');
     });
     sock.on('room:kicked', d => { room = null; toast(d.reason || 'Removed from the room.'); msg = d.reason || ''; open('menu'); });
     sock.on('game:start', d => { enterMatch(d.cfg, null); });
-    sock.on('game:log', d => { syncing = false; enterMatch(d.cfg, d); });
+    sock.on('game:log', d => { syncing = false; verifiedAtSync = CORE.verified; enterMatch(d.cfg, d); });
     sock.on('game:turn', t => { if (!CORE.active) return; if (!CORE.addTurn(t.n, t.cmds, t.h)) requestSync('gap'); });
+    sock.on('game:catchup', d => {
+      syncing = false; if (!CORE.active || !d) return;
+      for (let n = d.from; n < d.total; n++) if (!CORE.addTurn(n, (d.cmds && d.cmds[n]) || [], d.hashes ? d.hashes[n] : undefined)) { requestSync('full'); return; }
+      if (d.ended) CORE.ended = true;
+    });
     sock.on('game:end', () => { CORE.ended = true; });
     sock.on('game:reject', r => {
       const m = { gold: 'Not enough gold.', blocked: 'Cannot deploy on the path, water or another unit.', type: 'That troop is not in your squad.', position: 'Invalid position.', owner: 'That troop belongs to another player.', host: 'Only the host can start waves.', rate: 'Slow down a little.', wave: 'A wave is already running.', max: 'Already at max level.', ultimate: 'Ultimate not ready.', aim: 'No target in range.', tower: 'That troop is gone.', over: 'The match is over.' };
       toast(m[r.why] || 'Action rejected.');
     });
   }
+  // why: 'gap' = missed turns (cheap resume), 'full' = rebuild from the whole log, 'desync' = state hash mismatch (full, counted)
   function requestSync(why) {
+    if (!sock || !sock.connected) return;
     const now = Date.now(); if (syncing || now - lastSync < 1500) return; syncing = true; lastSync = now;
-    if (why === 'desync') { resyncs++; if (resyncs > 4) { netEl.innerHTML = 'This match went out of sync.<small>Please leave and rejoin the room.</small>'; netEl.classList.add('on'); return; } }
+    clearTimeout(syncTimer); syncTimer = setTimeout(() => { syncing = false; }, 6000);   // never get stuck waiting for a lost reply
+    if (why === 'desync') { resyncs++; if (resyncs > 4) { syncing = false; netEl.innerHTML = 'This match went out of sync.<small>Please leave and rejoin the room.</small>'; netEl.classList.add('on'); return; } }
+    if (why === 'gap' && CORE.active) { sock.emit('game:resume', { from: CORE.known }, r => { if (!r || !r.ok) { syncing = false; lastSync = 0; requestSync('full'); } }); return; }
     sock.emit('game:sync', {}, r => { if (!r || !r.ok) syncing = false; });
   }
-  const rpc = (ev, data) => new Promise(res => { if (!sock || !sock.connected) return res({ ok: false, error: 'Not connected to the server yet.' }); sock.emit(ev, data || {}, r => res(r || { ok: false, error: 'No response.' })); });
+  const rpc = (ev, data) => new Promise(res => { if (!sock || !sock.connected) return res({ ok: false, error: 'Not connected to the server yet.' }); let done = false; const t = setTimeout(() => { if (!done) { done = true; res({ ok: false, error: 'The server did not answer. Try again.' }); } }, 10000); sock.emit(ev, data || {}, r => { if (done) return; done = true; clearTimeout(t); res(r || { ok: false, error: 'No response.' }); }); });
 
   // ---------- entering / leaving a match ----------
   let initialLag = 1;
@@ -100,12 +112,13 @@
     if (!over && !confirm('Leave this multiplayer match? Your troops stay and keep fighting for your team.')) { e.stopImmediatePropagation(); e.preventDefault(); return; }
     CORE.end(); hud.classList.remove('on'); bossEl.classList.remove('on'); netEl.classList.remove('on');
     if (over) setTimeout(() => open('lobby'), 0);
-    else { try { sessionStorage.removeItem('sc_mp_active'); } catch (er) { /* ignore */ } if (sock) sock.emit('room:leave', {}); room = null; setTimeout(() => open('menu'), 0); }
+    else { try { sessionStorage.removeItem('sc_mp_active'); } catch (er) { /* ignore */ } room = null; if (sock) rpc('room:leave').then(() => { room = null; }); setTimeout(() => open('menu'), 0); }
   }, true);
 
   // ---------- in-match HUD (players, coins, base health, shared boss bar) ----------
   function buildHud() { hud.classList.add('on'); updateHud(); }
   function updateHud() {
+    if (resyncs && CORE.active && CORE.verified - verifiedAtSync > 40) resyncs = 0;          // healthy again: forgive earlier resyncs
     const g = SC.game;
     if (!CORE.active || !g || !g.pg) { hud.classList.remove('on'); bossEl.classList.remove('on'); return; }
     const rows = CORE.players.map(p => {
@@ -113,10 +126,10 @@
       return `<div class="mph-p${p.slot === CORE.me ? ' me' : ''}${conn ? '' : ' dc'}" style="border-left-color:${CORE.slotColor[p.slot % 4]}"><img src="${portrait(p.avatar, 28)}" alt=""><span class="n">${esc(p.name)}${room && room.hostPid === p.pid ? ' &#9813;' : ''}</span><span class="t">${conn ? towers + ' troops' : (rp && rp.left ? 'left' : 'offline')}</span><span class="g">${Math.floor(g.pg[p.slot] || 0)}g</span></div>`;
     }).join('');
     const pct = Math.max(0, Math.min(100, g.lives / Math.max(1, g.startLives) * 100));
-    hud.innerHTML = rows + `<div class="mph-base">Shared base: ${Math.max(0, g.lives)} / ${g.startLives}<div class="mph-bar"><i style="width:${pct}%"></i></div></div>`;
+    const hh = rows + `<div class="mph-base">Shared base: ${Math.max(0, g.lives)} / ${g.startLives}<div class="mph-bar"><i style="width:${pct}%"></i></div></div>`; if (hh !== hud._h) { hud._h = hh; hud.innerHTML = hh; }
     let hp = 0, mx = 0, nm = '';
     for (const e of g.enemies) if (e.isBoss && !e.dead) { hp += Math.max(0, e.hp); mx += e.maxHp; nm = e.name || 'Boss'; }
-    if (mx > 0) { bossEl.innerHTML = `${esc(String(nm).toUpperCase())}<div class="bar"><i style="width:${Math.max(0, hp / mx * 100)}%"></i></div>`; bossEl.classList.add('on'); } else bossEl.classList.remove('on');
+    if (mx > 0) { const bh = `${esc(String(nm).toUpperCase())}<div class="bar"><i style="width:${Math.max(0, hp / mx * 100)}%"></i></div>`; if (bh !== bossEl._h) { bossEl._h = bh; bossEl.innerHTML = bh; } bossEl.classList.add('on'); } else bossEl.classList.remove('on');
   }
   setInterval(updateHud, 120);
 
