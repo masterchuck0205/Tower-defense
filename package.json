@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node test/rooms.test.js && node test/resume.test.js && node test/speed.test.js && node test/gold-ui.test.js"
+    "test": "node test/rooms.test.js && node test/resume.test.js && node test/speed.test.js && node test/gold-ui.test.js && node test/auto.test.js"
   },
   "dependencies": {
     "express": "^4.21.2",

@@ -86,5 +86,9 @@ Good to know:
 
 * Unlocked troops/coins stay in each player's own browser save; the server checks that a placed troop is in the player's declared 10-troop squad, not that it is unlocked.
 * Match coin rewards are credited by each player's own browser to their own save.
-* Only the host can start waves and change the game speed (1x/2x/3x, applies to everyone). There is no pause in multiplayer.
+* Only the host can start waves, toggle **Auto** (each next wave starts by itself ~2 s after the previous one ends) and change the game speed (1x/2x/3x); both apply to everyone. There is no pause in multiplayer.
 * Friend requests are stored and can be accepted; inviting a friend into a room is not built yet.
+
+## Packs & unlocks
+
+Epic-or-better pull rates and direct-unlock prices were tuned up a little (Epic 820 / Legendary 1,750 / Mythical 3,000 coins). Pack guarantees are unchanged. Unlocking an Epic, Legendary or Mythical card plays a charge-up, flash, shockwave, particle burst and name banner (skipped for reduced-motion users).
