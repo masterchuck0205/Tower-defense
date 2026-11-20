@@ -25,6 +25,12 @@ let fails = 0; const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); 
   const r2 = await rate(); ok(r2 > r1 * 1.6, `turns ~2x faster (${r1} -> ${r2} per 600ms)`);
   A.fire('game:cmd', { seq: 3, c: { t: 'speed', v: 3 } }); await sleep(150); const r3 = await rate(); ok(r3 > r1 * 2.4, `3x faster (${r3})`);
   A.fire('game:cmd', { seq: 4, c: { t: 'speed', v: 1 } }); await sleep(150); const r4 = await rate(); ok(Math.abs(r4 - r1) <= 3, `back to 1x (${r4})`);
+  B.fire('game:cmd', { seq: 50, c: { t: 'auto', v: 1 } }); await sleep(100);
+  ok(B.last('game:reject').why === 'host' && !room.engine.__SC.game.autoWave, 'non-host cannot turn auto-wave on');
+  A.fire('game:cmd', { seq: 5, c: { t: 'auto', v: 1 } }); await sleep(100);
+  ok(room.engine.__SC.game.autoWave === true, 'host turns auto-wave on for the room');
+  A.fire('game:cmd', { seq: 6, c: { t: 'auto', v: 0 } }); await sleep(100);
+  ok(room.engine.__SC.game.autoWave === false, 'host turns auto-wave off');
   pump(); ok(!desync && C.speed === 1, 'client replays speed commands without desync, speed=' + C.speed);
   // late joiner replays log containing speed commands
   const C2 = createEngine(H).__MPCORE; const lg = room.logPayload(room.find(B.pid)); C2.begin(lg.cfg); C2.known = lg.total; C2.cmds = lg.cmds;
