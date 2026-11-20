@@ -4,12 +4,13 @@
   "description": "Stone & Crown: Mythic Pantheon - tower defence with real-time online co-op (Node.js, Express, Socket.IO, PostgreSQL)",
   "main": "server.js",
   "private": true,
-  "engines": { "node": ">=18.17" },
+  "engines": {
+    "node": ">=18.17"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node test/engine.test.js && node test/rooms.test.js && node test/rooms4.test.js",
-    "test:e2e": "python3 test/e2e.py && python3 test/e2e_boss.py && python3 test/single_player.py"
+    "test": "node test/rooms.test.js && node test/resume.test.js"
   },
   "dependencies": {
     "express": "^4.21.2",

@@ -28,10 +28,13 @@ async function main() {
   });
 
   app.get('/healthz', (req, res) => res.json({ ok: true, store: store.kind, rooms: mgr.rooms.size, matches: mgr.stats.matches, uptime: Math.round(process.uptime()) }));
-  app.use(express.static(path.join(__dirname, 'public'), { maxAge: '5m', index: 'index.html' }));
+  // The server's referee is extracted from index.html, so browsers must never run a cached older copy (it would desync).
+  app.use(express.static(path.join(__dirname, 'public'), { index: 'index.html', etag: true, lastModified: true, setHeaders: res => res.setHeader('Cache-Control', 'no-cache') }));
 
   server.listen(PORT, '0.0.0.0', () => console.log(`Stone & Crown online listening on port ${PORT} (storage: ${store.kind})`));
   const stop = () => { console.log('shutting down'); mgr.shutdown(); io.close(); server.close(() => process.exit(0)); setTimeout(() => process.exit(0), 3000).unref(); };
   process.on('SIGTERM', stop); process.on('SIGINT', stop);
 }
+process.on('unhandledRejection', e => console.error('unhandledRejection', e));
+process.on('uncaughtException', e => console.error('uncaughtException', e));
 main().catch(err => { console.error('Failed to start:', err); process.exit(1); });
