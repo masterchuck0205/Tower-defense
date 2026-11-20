@@ -7204,9 +7204,8 @@
     const def = TOWER_TYPES.find(d => d.id === t.typeId);
     const mult = t.tier === 1 ? 1.25 : (t.tier === 2 ? 1.65 : 2.15);
     const upgCost = Math.round(def.cost * mult);
+    if (MPCORE.active) { MPCORE.send({ t: 'upgrade', tid: t.tid }); return; }   // server checks the gold (our view is ~0.3 s behind)
     if (game.gold < upgCost) return;
-
-    if (MPCORE.active) { MPCORE.send({ t: 'upgrade', tid: t.tid }); return; }
     doUpgrade(t, def, upgCost);
   });
 
@@ -7314,7 +7313,7 @@
     if (game.selectedBuildType) {
       const def = TOWER_TYPES.find(d => d.id === game.selectedBuildType);
       if (!PlayerData.isUnlocked(def.id)) { showToast('That character is still locked.'); return; }
-      if (game.gold < def.cost) {
+      if (!MPCORE.active && game.gold < def.cost) {
         showToast('Not enough gold!');
         return;
       }
@@ -7401,6 +7400,7 @@
 
   document.getElementById('speedBtn').addEventListener('click', () => {
     if (!game) return;
+    if (MPCORE.active) { MPCORE.cycleSpeed(); return; }
     game.speedMult = game.speedMult === 1 ? 2 : (game.speedMult === 2 ? 3 : 1);
     document.getElementById('speedBtn').textContent = `${game.speedMult}x`;
   });
@@ -7958,13 +7958,13 @@
     const TT = 6;                                   // ticks per turn (6 x 1/60 s = 100 ms); the jitter buffer (turns) is adaptive, see M.buf
     const M = {
       TT, active: false, cfg: null, me: -1, tick: 0, known: 0, cmds: {}, hashes: {}, ended: false, executing: false, starting: false,
-      players: [], acc: 0, desyncs: 0, verified: 0, trace: {}, starved: 0, wasStarved: false, onSend: null, onDesync: null, onProgress: null, onLeaveRequest: null, _bd: null,
+      players: [], acc: 0, desyncs: 0, verified: 0, trace: {}, starved: 0, wasStarved: false, speed: 1, onSend: null, onDesync: null, onProgress: null, onLeaveRequest: null, _bd: null,
       slotColor: ['#38bdf8', '#fb923c', '#a3e635', '#e879f9']
     };
 
     M.begin = function (cfg) {
       this.cfg = cfg; this.players = cfg.players; this.me = cfg.me;
-      this.tick = 0; this.known = 0; this.cmds = {}; this.hashes = {}; this.ended = false; this.acc = 0; this.trace = {}; this.starved = 0; this.wasStarved = false;
+      this.tick = 0; this.known = 0; this.cmds = {}; this.hashes = {}; this.ended = false; this.acc = 0; this.trace = {}; this.starved = 0; this.wasStarved = false; this.speed = 1;
       if (this._bd === null) { try { this._bd = saveState.difficulty; } catch (e) { this._bd = undefined; } }
       try { saveState.difficulty = cfg.diff; } catch (e) { /* not ready */ }
       this.starting = true; startMatch(cfg.map, cfg.mode); this.starting = false;
@@ -7996,6 +7996,11 @@
 
     M.stepTick = function () { game.curP = -1; try { updateSimulation(SIM_STEP); } finally { game.curP = this.me; } this.tick++; };
 
+    M.cycleSpeed = function () {
+      if (this.cfg.hostSlot !== this.me) { showToast('Only the host can change the speed.'); return; }
+      this.send({ t: 'speed', v: this.speed === 1 ? 2 : (this.speed === 2 ? 3 : 1) });
+    };
+
     M.send = function (c) {
       if (c.tid !== undefined && game) { const t = game.towers.find(q => q.tid === c.tid); if (t && t.owner !== this.me) { showToast('That troop belongs to another player.'); return; } }
       if (this.onSend) this.onSend(c);
@@ -8017,6 +8022,10 @@
           doPlace(def, { x: c.x, y: c.y }, c.p); return { ok: true };
         }
         if (c.t === 'wave') { if (game.waveActive) return rej('wave'); startNextWave(); return { ok: true }; }
+        if (c.t === 'speed') {                                  // room-wide game speed (host only). Turns stay 6 ticks; the server sends them faster and clients play them faster.
+          if (c.v !== 1 && c.v !== 2 && c.v !== 3) return rej('speed');
+          this.speed = c.v; const sb = document.getElementById('speedBtn'); if (sb) sb.textContent = c.v + 'x'; return { ok: true };
+        }
         const t = game.towers.find(q => q.tid === c.tid);
         if (!t) return rej('tower'); if (t.owner !== c.p) return rej('owner');
         const def = TOWER_TYPES.find(d => d.id === t.typeId);
@@ -8077,7 +8086,7 @@
       const buf = Math.min(5, 2 + (this.starved >> 2)), limit = this.ended ? this.known * TT : Math.max(0, (this.known - buf) * TT), lag = limit - this.tick;
       if (lag <= 0) { this.acc = 0; if (!this.ended && !this.wasStarved) { this.wasStarved = true; this.starved++; } if (this.onProgress) this.onProgress(0); return; }
       this.wasStarved = false;
-      this.acc = Math.min(this.acc + dt, 0.25);
+      this.acc = Math.min(this.acc + dt * this.speed, 0.25 * this.speed);
       let steps = Math.floor(this.acc / SIM_STEP); this.acc -= steps * SIM_STEP;
       if (lag > 24) {                                         // behind (joining late / reconnecting): catch up under a CPU budget
         const t0 = performance.now(), budget = lag > 400 ? 14 : 6;
@@ -8091,12 +8100,21 @@
     M.hudFix = function () {
       if (!this.active) return;
       const sb = document.getElementById('speedBtn'), pb = document.getElementById('pauseBtn'), nb = document.getElementById('nextWaveBtn');
-      sb.disabled = true; pb.disabled = true; sb.style.opacity = '.4'; pb.style.opacity = '.4';
+      pb.disabled = true; pb.style.opacity = '.4';
+      const host = this.cfg.hostSlot === this.me; sb.disabled = !host; sb.style.opacity = host ? '' : '.4'; sb.title = host ? 'Game speed for everyone' : 'Only the host can change the speed'; sb.textContent = this.speed + 'x';
       if (this.cfg.hostSlot !== this.me) { nb.disabled = true; nb.title = 'Only the host can start waves'; }
       else { nb.title = ''; if (game) nb.disabled = !!(game.waveActive || game.over); }   // a newly promoted host must get the button back
     };
 
-    const _uh = updateHud; updateHud = function () { _uh.apply(this, arguments); M.hudFix(); };
+    // UI code reads game.gold, but while the shared sim steps (or while a teammate's command is applied) game.gold means THAT player's purse.
+    // Always evaluate UI reads as the local player, otherwise the gold counter / upgrade button / deck affordability show someone else's money.
+    const asMe = fn => function () {
+      if (!M.active || M.me < 0 || !game || game.curP === M.me) return fn.apply(this, arguments);
+      const p = game.curP; game.curP = M.me;
+      try { return fn.apply(this, arguments); } finally { game.curP = p; }
+    };
+    const _uh = asMe(updateHud); updateHud = function () { _uh.apply(this, arguments); M.hudFix(); };
+    renderTowerDeck = asMe(renderTowerDeck);
     const _snw = startNextWave;
     startNextWave = function () {
       if (M.active && !M.executing) {
@@ -8120,7 +8138,7 @@
     };
     const _sm = startMatch;
     startMatch = function () { if (M.active && !M.starting) { if (M.onLeaveRequest) M.onLeaveRequest(); return; } const r = _sm.apply(this, arguments); if (!M.active) M.restoreUi(); return r; };
-    const _ri = refreshInspector;
+    const _ri = asMe(refreshInspector);
     refreshInspector = function () {
       _ri.apply(this, arguments);
       if (!M.active) { const ip = document.getElementById('inspectorPanel'); if (ip) ip.classList.remove('mp-foreign'); return; }

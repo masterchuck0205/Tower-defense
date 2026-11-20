@@ -75,7 +75,7 @@
     });
     sock.on('game:end', () => { CORE.ended = true; });
     sock.on('game:reject', r => {
-      const m = { gold: 'Not enough gold.', blocked: 'Cannot deploy on the path, water or another unit.', type: 'That troop is not in your squad.', position: 'Invalid position.', owner: 'That troop belongs to another player.', host: 'Only the host can start waves.', rate: 'Slow down a little.', wave: 'A wave is already running.', max: 'Already at max level.', ultimate: 'Ultimate not ready.', aim: 'No target in range.', tower: 'That troop is gone.', over: 'The match is over.' };
+      const m = { gold: 'Not enough gold (your last purchase may still be arriving).', blocked: 'Cannot deploy on the path, water or another unit.', type: 'That troop is not in your squad.', position: 'Invalid position.', owner: 'That troop belongs to another player.', host: 'Only the host can do that.', speed: 'Invalid speed.', rate: 'Slow down a little.', wave: 'A wave is already running.', max: 'Already at max level.', ultimate: 'Ultimate not ready.', aim: 'No target in range.', tower: 'That troop is gone.', over: 'The match is over.' };
       toast(m[r.why] || 'Action rejected.');
     });
   }
