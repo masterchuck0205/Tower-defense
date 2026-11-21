@@ -91,4 +91,23 @@ Good to know:
 
 ## Packs & unlocks
 
-Epic-or-better pull rates and direct-unlock prices were tuned up a little (Epic 820 / Legendary 1,750 / Mythical 3,000 coins). Pack guarantees are unchanged. Unlocking an Epic, Legendary or Mythical card plays a charge-up, flash, shockwave, particle burst and name banner (skipped for reduced-motion users).
+Legendary and Mythical pull rates were cut sharply (e.g. Recruit Pack 0.25% / 0.05%); direct-unlock prices were tuned up a little (Epic 820 / Legendary 1,750 / Mythical 3,000 coins). Pack guarantees are unchanged. Unlocking an Epic, Legendary or Mythical card plays a charge-up, flash, shockwave, particle burst and name banner (skipped for reduced-motion users).
+
+## Creator class
+
+A new class (its own filter in the Squad and Collection screens) with three troops:
+
+* **Chuck** (Mythical, gold support): *Payday* pays his owner gold every few seconds during a wave, *Tip Jar* pays a bonus on every enemy that dies in his range, and the ultimate *Golden Hour* gives a lump sum and doubles both for about 11 seconds. In co-op the gold goes only to the player who owns Chuck.
+* **Lachlan** (Legendary, builder): Genesis Bolts (every 4th is a Divine Spark), temporary crystal Constructs that shoot and slow, and the ultimate *Let There Be Light* (a Blueprint Realm that slows and burns enemies and conjures extra Constructs).
+* **Ozan** (Legendary, frontline): molten clay shots, Clay Golems that block and fight on the path, and the ultimate *Mass Forging* (stunning shockwave plus a squad of Golems).
+
+`npm test` includes `test/creators.test.js` (deploy, income goes to the right player, summons, ultimates, server/client sync).
+
+## Balance pass
+
+Troops were compared on damage per second per 100 gold within each rarity (support troops excluded), and the clear outliers were pulled toward their band.
+* **Nerfed:** Royal Assassin (320g, 66 dmg, 1.25/s), Agent Zero (850g, 180 dmg), Sabertooth (42 dmg, 1.45/s), Archer (20 dmg), Terror Bird (2.8/s), Spec Ops (74 dmg), Ballista (200g), Combat Sniper (330g).
+* **Buffed:** Pachycephalosaurus (78), Siege Engineer (52), Spinosaurus (115), Mammoth Rider (150 dmg, 620g), Vampire Lord (84), Loki (68), Heavy Weapons (560g), Venom (92), Simo Hayha (680 dmg, 0.3/s, 1050g), Egyptian Pharaoh (128), Royal Dragon Archer (126), Cerberus (76).
+* **Creators:** Lachlan's Constructs were doing roughly 95 dps each; now one shot per second at lower damage, fewer of them, and a weaker Blueprint Realm. Chuck's Payday and Tip Jar are softer, extra Chucks pay half Payday and only the best Tip Jar applies per enemy, so stacking him is not a free snowball. Ozan +8 dmg, Chuck +6 dmg.
+
+**Creator buffs (slight):** Chuck 38 dmg, Payday base +1, Tip Jar +1%; Lachlan 72 dmg and stronger Constructs; Ozan 72 dmg and tougher, harder-hitting Golems. All three also got new signature portrait effects (sunburst and coin fountain, blueprint mandala and light shafts, forge glow, anvil and hammer sparks).
