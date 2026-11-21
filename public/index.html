@@ -1604,6 +1604,66 @@
   @media (prefers-reduced-motion: reduce) { #introSplash { display: none; } body:not(.cine-go) .map-card, body:not(.cine-go) .menu-header, body:not(.cine-go) .control-strip { opacity: 1; } }
 </style>
 <link rel="stylesheet" href="multiplayer.css">
+<style id="finalPolish">
+  /* ---- final polish layer: consistent depth, motion and focus across every screen ---- */
+  :root { --lift: 0 10px 28px rgba(0,0,0,.45); --edge: inset 0 1px 0 rgba(255,255,255,.1); --gold-line: linear-gradient(90deg, transparent, rgba(245,185,66,.75), transparent); }
+  html { scroll-behavior: smooth; }
+  body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; background: radial-gradient(120% 90% at 50% 0%, #17203a 0%, #0b0e17 62%) fixed; }
+  ::selection { background: rgba(245,185,66,.35); }
+  ::-webkit-scrollbar { width: 10px; height: 10px; } ::-webkit-scrollbar-track { background: rgba(255,255,255,.03); }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #475569, #263248); border-radius: 8px; border: 2px solid #0b0e17; } ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+  :focus-visible { outline: 2px solid var(--accent-gold); outline-offset: 2px; border-radius: 8px; }
+  h1, h2, h3, .menu-header h1, .modal-box h2, .col-card-name, .char-card-title { letter-spacing: .04em; text-shadow: 0 2px 10px rgba(0,0,0,.55); }
+  .menu-header h1 { background: linear-gradient(180deg, #fff7d6, #f5b942 55%, #b4741a); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; filter: drop-shadow(0 2px 8px rgba(245,185,66,.35)); }
+  .btn { border-radius: 12px; letter-spacing: .02em; }
+  .btn:not(:disabled):hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: var(--lift), var(--edge); }
+  .btn:not(:disabled):active { transform: translateY(0) scale(.98); filter: brightness(.96); transition-duration: .06s; }
+  .btn:disabled { filter: saturate(.5) brightness(.8); cursor: not-allowed; }
+  .char-card, .col-card, .map-card { border-radius: 16px; box-shadow: var(--edge), 0 6px 18px rgba(0,0,0,.35); transition: transform .22s var(--ease), box-shadow .22s var(--ease), border-color .22s; }
+  .char-card:hover, .col-card:hover, .map-card:hover { transform: translateY(-4px) scale(1.012); box-shadow: var(--lift), 0 0 0 1px rgba(245,185,66,.35), var(--edge); }
+  .rarity-badge { letter-spacing: .08em; text-transform: uppercase; box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 1px 4px rgba(0,0,0,.4); }
+  .rar-Legendary { text-shadow: 0 0 8px rgba(245,158,11,.7); } .rar-Mythical { text-shadow: 0 0 10px rgba(244,63,94,.8); animation: mythPulse 2.6s ease-in-out infinite; }
+  @keyframes mythPulse { 50% { box-shadow: 0 0 14px rgba(244,63,94,.65), inset 0 1px 0 rgba(255,255,255,.25); } }
+  .modal-box { border-radius: 20px; backdrop-filter: blur(14px) saturate(1.2); animation: modalIn .28s var(--ease) both; }
+  .modal-box::before { content: ''; position: absolute; left: 12%; right: 12%; top: 0; height: 2px; background: var(--gold-line); }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(14px) scale(.97); } }
+  .stat-chip { backdrop-filter: blur(6px); transition: transform .2s var(--ease); }
+  .stat-chip.gold { color: #fde68a; text-shadow: 0 0 10px rgba(245,185,66,.5); } .stat-chip.lives { color: #fecaca; }
+  #canvasWrap { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 1px rgba(245,185,66,.18), 0 18px 50px rgba(0,0,0,.55); }
+  #canvasWrap::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;      /* soft vignette + warm top light over the battlefield */
+    background: radial-gradient(120% 100% at 50% 40%, transparent 58%, rgba(4,6,14,.5) 100%), linear-gradient(180deg, rgba(255,214,140,.06), transparent 30%); }
+  #canvasWrap > *:not(canvas) { z-index: 3; }
+  @media (prefers-reduced-motion: reduce) { .rar-Mythical { animation: none; } .modal-box { animation: none; } .btn, .char-card, .col-card, .map-card { transition: none; } }
+</style>
+<style id="buttonForge">
+  /* ---- "forged" buttons: steel plates with corner brackets, engraved labels, a molten-gold primary ---- */
+  .btn { --tick: #f5b942; position: relative; font-family: 'Cinzel', serif; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; font-size: .8rem; color: #f1f5f9;
+    border: 1px solid rgba(245,185,66,.38); border-radius: 9px; padding: 9px 16px; text-shadow: 0 1px 2px rgba(0,0,0,.8);
+    background: linear-gradient(180deg, #3a4868 0%, #232f4b 48%, #151c31 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.2), inset 0 -2px 0 rgba(0,0,0,.4), inset 0 0 0 1px rgba(0,0,0,.35), 0 4px 12px rgba(0,0,0,.45); }
+  .btn::before, .btn:not(.btn-gold)::after { content: ''; position: absolute; width: 7px; height: 7px; border: 0 solid var(--tick); opacity: .75; pointer-events: none; transition: width .18s, height .18s, opacity .18s; }
+  .btn::before { left: 4px; top: 4px; border-left-width: 2px; border-top-width: 2px; border-top-left-radius: 3px; }
+  .btn:not(.btn-gold)::after { right: 4px; bottom: 4px; border-right-width: 2px; border-bottom-width: 2px; border-bottom-right-radius: 3px; }
+  .btn:not(:disabled):hover { border-color: rgba(253,224,138,.8); background: linear-gradient(180deg, #46567a 0%, #2b3957 48%, #1a2340 100%); }
+  .btn:not(:disabled):hover::before, .btn:not(.btn-gold):not(:disabled):hover::after { width: 12px; height: 12px; opacity: 1; }
+  .btn:not(:disabled):active { box-shadow: inset 0 3px 8px rgba(0,0,0,.6), inset 0 0 0 1px rgba(0,0,0,.4); }
+  .btn:disabled { color: #8a97ad; border-color: rgba(255,255,255,.1); } .btn:disabled::before, .btn:disabled::after { opacity: .2; }
+  .btn-gold { --tick: #7c2d12; color: #3b1d04; border-color: #fde68a; text-shadow: 0 1px 0 rgba(255,240,180,.75);
+    background: linear-gradient(180deg, #fff0b3 0%, #fbbf24 36%, #e08a0b 78%, #b45309 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.8), inset 0 -3px 0 rgba(120,53,15,.5), 0 5px 16px rgba(245,158,11,.45); }
+  .btn-gold:not(:disabled):hover { background: linear-gradient(180deg, #fff7cc 0%, #fcd34d 36%, #ea980f 78%, #c2570b 100%); border-color: #fffbeb; }
+  #nextWaveBtn:not(:disabled) { animation: readyPulse 2.4s ease-in-out infinite; }
+  @keyframes readyPulse { 0%, 100% { box-shadow: inset 0 1px 0 rgba(255,255,255,.8), inset 0 -3px 0 rgba(120,53,15,.5), 0 5px 16px rgba(245,158,11,.45); } 50% { box-shadow: inset 0 1px 0 rgba(255,255,255,.8), inset 0 -3px 0 rgba(120,53,15,.5), 0 0 0 3px rgba(253,224,138,.35), 0 6px 26px rgba(245,158,11,.8); } }
+  .btn-emerald { --tick: #022c22; color: #ecfdf5; border-color: #6ee7b7; background: linear-gradient(180deg, #5eead4 0%, #10b981 38%, #047857 100%); text-shadow: 0 1px 2px rgba(2,44,34,.8); box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -3px 0 rgba(2,44,34,.45), 0 5px 16px rgba(16,185,129,.4); }
+  .btn-emerald:not(:disabled):hover { background: linear-gradient(180deg, #99f6e4 0%, #34d399 38%, #059669 100%); }
+  .btn-pack { --tick: #fbcfe8; color: #fff; border-color: #f0abfc; background: linear-gradient(115deg, #6d28d9, #c026d3 45%, #ec4899 70%, #6d28d9); background-size: 220% 100%; animation: packShift 5s linear infinite;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -3px 0 rgba(76,29,149,.5), 0 5px 18px rgba(192,38,211,.5); }
+  @keyframes packShift { to { background-position: -220% 0; } }
+  .faction-pill, .mode-pill, .deck-tab, .target-btn { font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: .06em; transition: transform .18s var(--ease), box-shadow .18s, background .18s, color .18s; }
+  .faction-pill:hover, .mode-pill:hover, .deck-tab:hover, .target-btn:hover { transform: translateY(-2px); }
+  .faction-pill.active, .mode-pill.active, .deck-tab.active, .target-btn.active { color: #fff7d6; box-shadow: 0 0 0 1px rgba(245,185,66,.8), 0 0 16px rgba(245,185,66,.35), inset 0 -3px 0 #f5b942; text-shadow: 0 0 8px rgba(245,185,66,.7); }
+  @media (prefers-reduced-motion: reduce) { #nextWaveBtn, .btn-pack { animation: none !important; } .btn::before, .btn::after { transition: none; } }
+</style>
 </head>
 <body>
 
@@ -1722,7 +1782,7 @@
   <div class="squad-main-body">
     <div class="squad-left-pane">
       <div class="faction-filters" id="factionFilters">
-        <button class="faction-pill active" data-faction="All">All (55)</button>
+        <button class="faction-pill active" data-faction="All">All (58)</button>
         <button class="faction-pill" data-faction="Medieval">Medieval</button>
         <button class="faction-pill" data-faction="Prehistoric">Prehistoric</button>
         <button class="faction-pill" data-faction="Ancient">Ancient</button>
@@ -1730,6 +1790,7 @@
         <button class="faction-pill" data-faction="Magic">Magic</button>
         <button class="faction-pill" data-faction="Modern">Modern</button>
         <button class="faction-pill" data-faction="Futuristic">Futuristic</button>
+        <button class="faction-pill" data-faction="Creator">Creator</button>
       </div>
       <div class="char-select-grid" id="charSelectGrid"></div>
     </div>
@@ -2110,6 +2171,13 @@
       trapSnap: c => { noise(c, { ft: 'highpass', f0: 2500, dur: 0.06, v: 0.2 }); tone(c, { type: 'square', f0: 180, f1: 60, dur: 0.12, v: 0.07 }); },
       checkmate: c => { bell(c, 523, 0, 0.09, 0.5); bell(c, 659, 0.11, 0.09, 0.5); bell(c, 784, 0.22, 0.11, 0.8); noise(c, { ft: 'bandpass', f0: 900, q: 2, dur: 0.12, v: 0.08, at: 0.22 }); },
       chessUlt: c => { tone(c, { f0: 110, f1: 82, dur: 1.5, v: 0.17, type: 'sine' }); tone(c, { f0: 221, f1: 164, dur: 1.2, v: 0.07, type: 'triangle' }); noise(c, { f0: 2200, f1: 120, dur: 1.1, v: 0.07 }); bell(c, 880, 0.05, 0.08, 0.9); bell(c, 1175, 0.2, 0.07, 0.9); bell(c, 1568, 0.35, 0.06, 1.0); },
+      // --- The Creator: light, chimes, drafted glass ---
+      creatorBolt: c => { tone(c, { f0: 880, f1: 1480, dur: 0.12, v: 0.07, type: 'sine' }); tone(c, { f0: 1760, f1: 1320, dur: 0.1, v: 0.04, at: 0.03, type: 'triangle' }); },
+      creatorSpark: c => { bell(c, 1047, 0, 0.07, 0.5); bell(c, 1568, 0.06, 0.06, 0.5); noise(c, { ft: 'highpass', f0: 5000, dur: 0.08, v: 0.06 }); },
+      conjure: c => { tone(c, { f0: 220, f1: 660, dur: 0.35, v: 0.08, type: 'triangle', lp: 2000 }); bell(c, 784, 0.12, 0.06, 0.6); noise(c, { f0: 1500, f1: 300, dur: 0.25, v: 0.06 }); },
+      genesisUlt: c => { tone(c, { f0: 98, f1: 196, dur: 1.4, v: 0.16, type: 'sine' }); [392, 523, 659, 784, 1047].forEach((f, i) => bell(c, f, 0.1 + i * 0.09, 0.07, 1.0)); noise(c, { f0: 3000, f1: 150, dur: 1.0, v: 0.08 }); },
+      forge: c => { noise(c, { ft: 'bandpass', f0: 700, f1: 2400, q: 3, dur: 0.12, v: 0.12 }); tone(c, { f0: 150, f1: 60, dur: 0.3, v: 0.12, type: 'triangle', lp: 700 }); bell(c, 330, 0.06, 0.05, 0.5); },
+      mass: c => { tone(c, { f0: 60, f1: 30, dur: 1.2, v: 0.22, type: 'sine' }); noise(c, { f0: 1800, f1: 90, dur: 0.9, v: 0.14 }); [196, 262, 330].forEach((f, i) => bell(c, f, 0.1 + i * 0.1, 0.07, 0.9)); },
       // --- King Midas: coins, gold chimes, stone ---
       goldBolt: c => { tone(c, { f0: 1318, f1: 2093, dur: 0.14, v: 0.08, type: 'sine' }); tone(c, { f0: 880, f1: 1760, dur: 0.1, v: 0.05, type: 'triangle' }); noise(c, { ft: 'highpass', f0: 5000, dur: 0.05, v: 0.05 }); },
       coin: c => { tone(c, { f0: 1568, dur: 0.12, v: 0.08, type: 'square', lp: 5000 }); tone(c, { f0: 2093, dur: 0.22, v: 0.08, at: 0.07, type: 'square', lp: 6000 }); noise(c, { ft: 'highpass', f0: 6000, dur: 0.05, v: 0.06, at: 0.07 }); },
@@ -2148,7 +2216,7 @@
     // --- ORIGINAL 6 CLASSIC TROOPS ---
     {
       id: 'archer', faction: 'Medieval', attackType: 'Ranged Single', category: 'classic', rarity: 'Common',
-      name: 'Archer Post', cost: 75, range: 155, damage: 22, fireRate: 1.35,
+      name: 'Archer Post', cost: 75, range: 155, damage: 20, fireRate: 1.35,
       color: '#38bdf8', accent: '#e0f2fe', projSpeed: 560, type: 'single',
       desc: 'Swift arrows. High single-target DPS and reliable early-wave defense.'
     },
@@ -2172,7 +2240,7 @@
     },
     {
       id: 'ballista', faction: 'Magic', attackType: 'Armor Pierce', category: 'classic', rarity: 'Rare',
-      name: 'Arcane Ballista', cost: 175, range: 255, damage: 98, fireRate: 0.48, armorPierce: true,
+      name: 'Arcane Ballista', cost: 200, range: 255, damage: 98, fireRate: 0.48, armorPierce: true,
       color: '#818cf8', accent: '#e0e7ff', projSpeed: 780, type: 'sniper',
       desc: 'Long-range enchanted rail-bolt that completely ignores enemy armor.'
     },
@@ -2186,7 +2254,7 @@
     // --- 15 NEW EXPANSION CHARACTERS ---
     {
       id: 'sabertooth', faction: 'Prehistoric', attackType: 'Feral Rend', category: 'classic', rarity: 'Common',
-      name: 'Sabertooth', cost: 190, range: 122, damage: 48, fireRate: 1.55,
+      name: 'Sabertooth', cost: 190, range: 122, damage: 42, fireRate: 1.45,
       color: '#f59e0b', accent: '#fef3c7', projSpeed: 680, type: 'sabertooth',
       desc: 'Apex prehistoric predator dealing +32% bonus damage to wounded targets.'
     },
@@ -2198,7 +2266,7 @@
     },
     {
       id: 'royalAssassin', faction: 'Medieval', attackType: 'Stealth Critical', category: 'classic', rarity: 'Rare',
-      name: 'Royal Assassin', cost: 280, range: 138, damage: 78, fireRate: 1.30, armorPierce: true,
+      name: 'Royal Assassin', cost: 320, range: 138, damage: 66, fireRate: 1.25, armorPierce: true,
       color: '#6366f1', accent: '#e0e7ff', projSpeed: 760, type: 'royalAssassin',
       desc: 'Shadow-cloaked duelist with Stealth Shroud and high critical backstab damage.'
     },
@@ -2210,7 +2278,7 @@
     },
     {
       id: 'combatSniper', faction: 'Modern', attackType: 'Long-Range Piercing', category: 'classic', rarity: 'Rare',
-      name: 'Combat Sniper', cost: 300, range: 340, damage: 185, fireRate: 0.42, armorPierce: true,
+      name: 'Combat Sniper', cost: 330, range: 340, damage: 185, fireRate: 0.42, armorPierce: true,
       color: '#4ade80', accent: '#dcfce7', projSpeed: 1050, type: 'combatSniper',
       desc: 'Camouflaged marksman with ultra-long range and armor-piercing rounds.'
     },
@@ -2228,13 +2296,13 @@
     },
     {
       id: 'siegeEngineer', faction: 'Medieval', attackType: 'Turret & Overclock', category: 'mythic', rarity: 'Rare',
-      name: 'Siege Engineer', cost: 360, range: 165, damage: 42, fireRate: 0.95, isMechanical: true,
+      name: 'Siege Engineer', cost: 360, range: 165, damage: 52, fireRate: 0.95, isMechanical: true,
       color: '#f59e0b', accent: '#fef3c7', projSpeed: 580, type: 'siegeEngineer',
       desc: 'Artificer deploying Clockwork Turrets and boosting nearby mechanical units (+25% SPD).'
     },
     {
       id: 'specOps', faction: 'Modern', attackType: 'Tactical Command', category: 'mythic', rarity: 'Epic',
-      name: 'Special Forces Commander', cost: 440, range: 195, damage: 82, fireRate: 1.45, buffDmg: 1.24, buffRate: 1.16,
+      name: 'Special Forces Commander', cost: 440, range: 195, damage: 74, fireRate: 1.45, buffDmg: 1.24, buffRate: 1.16,
       color: '#22c55e', accent: '#bbf7d0', projSpeed: 880, type: 'specOps',
       desc: 'Elite commander granting +24% DMG (+36% to Modern/Futuristic) & +16% Speed.'
     },
@@ -2320,7 +2388,7 @@
     },
     {
       id: 'agentZero', faction: 'Modern', attackType: 'Covert Gadgets', category: 'mythic', rarity: 'Legendary',
-      name: 'Agent Zero', cost: 800, range: 285, damage: 215, fireRate: 1.05, armorPierce: true, buffRate: 1.22, buffRange: 1.10,
+      name: 'Agent Zero', cost: 850, range: 285, damage: 180, fireRate: 1.05, armorPierce: true, buffRate: 1.22, buffRange: 1.10,
       color: '#38bdf8', accent: '#f8fafc', projSpeed: 980, type: 'agentZero',
       desc: 'Secret Agent: Precision Shots, deploys Mini-Turrets, drops Smoke Screens, & +22% SPD aura.'
     },
@@ -2344,7 +2412,7 @@
   const NEW_TROOPS = [
     // --- Medieval Fantasy ---
     { id: 'vampireLord', faction: 'Medieval', attackType: 'Blood Drain', category: 'mythic', rarity: 'Epic',
-      name: 'Vampire Lord', cost: 520, range: 175, damage: 72, fireRate: 1.0, color: '#9f1239', accent: '#fecdd3', projSpeed: 620, type: 'vampireLord',
+      name: 'Vampire Lord', cost: 520, range: 175, damage: 84, fireRate: 1.0, color: '#9f1239', accent: '#fecdd3', projSpeed: 620, type: 'vampireLord',
       evo: ['Crimson Noble', 'Blood Count', 'Eternal Sovereign'],
       desc: 'Dark magic bolts that drain life. Every 12 hits restores 1 citadel life and unleashes a Crimson Nova (faster at higher levels).' },
     { id: 'stormKnight', faction: 'Medieval', attackType: 'Lightning Melee', category: 'mythic', rarity: 'Epic',
@@ -2356,24 +2424,24 @@
       evo: ['Tinkerer', 'Master Engineer', 'Runesmith Grandmaster'],
       desc: 'Fires rivets and builds temporary mechanical turrets that shoot enemies for 14 seconds.' },
     { id: 'royalDragonArcher', faction: 'Medieval', attackType: 'Explosive Arrows', category: 'mythic', rarity: 'Legendary',
-      name: 'Royal Dragon Archer', cost: 780, range: 270, damage: 120, fireRate: 0.95, splash: 62, color: '#f97316', accent: '#ffedd5', projSpeed: 820, type: 'dragonArcher',
+      name: 'Royal Dragon Archer', cost: 780, range: 270, damage: 126, fireRate: 0.95, splash: 62, color: '#f97316', accent: '#ffedd5', projSpeed: 820, type: 'dragonArcher',
       evo: ['Dragon Scout', 'Wyrm Marksman', 'Dragon King\'s Bow'],
       desc: 'Magical arrows explode on impact. Every 4th shot is a Dragonfire Volley of three arrows.' },
     // --- Prehistoric ---
     { id: 'spinosaurus', faction: 'Prehistoric', attackType: 'Sweeping Maul', category: 'mythic', rarity: 'Epic',
-      name: 'Spinosaurus', cost: 560, range: 125, damage: 90, fireRate: 0.8, color: '#0d9488', accent: '#ccfbf1', projSpeed: 0, type: 'spinosaurus',
+      name: 'Spinosaurus', cost: 560, range: 125, damage: 115, fireRate: 0.8, color: '#0d9488', accent: '#ccfbf1', projSpeed: 0, type: 'spinosaurus',
       evo: ['Sail-Back', 'River Tyrant', 'Apex Leviathan'],
       desc: 'Giant predator whose jaws and claws sweep a wide arc, hitting every enemy in front of it.' },
     { id: 'pachycephalosaurus', faction: 'Prehistoric', attackType: 'Charging Stun', category: 'classic', rarity: 'Rare',
-      name: 'Pachycephalosaurus', cost: 300, range: 110, damage: 55, fireRate: 0.7, color: '#d97706', accent: '#fde68a', projSpeed: 0, type: 'pachy',
+      name: 'Pachycephalosaurus', cost: 300, range: 110, damage: 78, fireRate: 0.7, color: '#d97706', accent: '#fde68a', projSpeed: 0, type: 'pachy',
       evo: ['Bonehead', 'Dome Breaker', 'Skullcrusher'],
       desc: 'Head-butts foes and periodically charges into enemy groups, stunning everything it hits.' },
     { id: 'mammothRider', faction: 'Prehistoric', attackType: 'Stampede Charge', category: 'mythic', rarity: 'Epic',
-      name: 'Mammoth Rider', cost: 650, range: 130, damage: 130, fireRate: 0.6, splash: 70, color: '#92400e', accent: '#fef3c7', projSpeed: 0, type: 'mammothRider',
+      name: 'Mammoth Rider', cost: 620, range: 130, damage: 150, fireRate: 0.6, splash: 70, color: '#92400e', accent: '#fef3c7', projSpeed: 0, type: 'mammothRider',
       evo: ['Tusk Scout', 'Warherd Chief', 'Ice Age Warlord'],
       desc: 'Durable mounted unit. Heavy stomps with splash, plus a powerful Stampede charge that flattens and stuns.' },
     { id: 'terrorBird', faction: 'Prehistoric', attackType: 'Rapid Pecks', category: 'classic', rarity: 'Rare',
-      name: 'Terror Bird', cost: 230, range: 110, damage: 20, fireRate: 3.2, color: '#4f46e5', accent: '#c7d2fe', projSpeed: 0, type: 'terrorBird',
+      name: 'Terror Bird', cost: 230, range: 110, damage: 20, fireRate: 2.8, color: '#4f46e5', accent: '#c7d2fe', projSpeed: 0, type: 'terrorBird',
       evo: ['Hunter', 'Razorbeak', 'Apex Stalker'],
       desc: 'Lightning-fast predator pecking up to 3 times a second. Every 5th peck causes a bleed.' },
     // --- Mythological ---
@@ -2383,7 +2451,7 @@
       evo: ['Wanderer', 'Allfather', 'Lord of Asgard'],
       desc: 'Runic magic bolts and Gungnir, a piercing spear. Grants nearby Mythological units +18% damage and +12% speed.' },
     { id: 'loki', faction: 'Mythological', attackType: 'Illusion & Confusion', category: 'mythic', rarity: 'Epic',
-      name: 'Loki', cost: 600, range: 190, damage: 55, fireRate: 1.0, color: '#22c55e', accent: '#bbf7d0', projSpeed: 700, type: 'loki',
+      name: 'Loki', cost: 600, range: 190, damage: 68, fireRate: 1.0, color: '#22c55e', accent: '#bbf7d0', projSpeed: 700, type: 'loki',
       evo: ['Trickster', 'Shapeshifter', 'God of Mischief'],
       desc: 'Conjures illusion decoys that block and fight, and his bolts confuse enemies so they stumble backward.' },
     { id: 'artemis', faction: 'Mythological', attackType: 'Moonlit Sniper', category: 'mythic', rarity: 'Legendary',
@@ -2391,7 +2459,7 @@
       evo: ['Huntress', 'Moon Goddess', 'Lady of the Hunt'],
       desc: 'Extremely accurate longest-range archer. Ignores armor, crits for 2.2x, and marks targets to take +25% damage.' },
     { id: 'cerberus', faction: 'Mythological', attackType: 'Triple Head', category: 'mythic', rarity: 'Legendary',
-      name: 'Cerberus', cost: 760, range: 135, damage: 70, fireRate: 1.5, color: '#4b5563', accent: '#fca5a5', projSpeed: 0, type: 'cerberus',
+      name: 'Cerberus', cost: 760, range: 135, damage: 76, fireRate: 1.5, color: '#4b5563', accent: '#fca5a5', projSpeed: 0, type: 'cerberus',
       evo: ['Hound of Hades', 'Guardian of the Gate', 'Hellhound King'],
       desc: 'Three heads, three effects per bite: Fire burns, Frost slows, Venom strips armor.' },
     // --- Ancient Civilisations ---
@@ -2401,7 +2469,7 @@
       evo: ['Optio', 'Centurion', 'Legate'],
       desc: 'Defensive warrior who bashes foes (every 4th strike stuns) and gives nearby soldiers +12% damage, +6% speed.' },
     { id: 'egyptianPharaoh', faction: 'Ancient', attackType: 'Sun Magic & Guardians', category: 'mythic', rarity: 'Legendary',
-      name: 'Egyptian Pharaoh', cost: 800, range: 220, damage: 110, fireRate: 0.9, splash: 40, color: '#eab308', accent: '#fef3c7', projSpeed: 700, type: 'pharaoh',
+      name: 'Egyptian Pharaoh', cost: 800, range: 220, damage: 128, fireRate: 0.9, splash: 40, color: '#eab308', accent: '#fef3c7', projSpeed: 700, type: 'pharaoh',
       evo: ['Young King', 'Living God', 'Eternal Pharaoh'],
       desc: 'Ancient magic bolts, and summons two golden guardians that block and fight for 13 seconds.' },
     { id: 'samuraiMaster', faction: 'Ancient', attackType: 'Precision Iai', category: 'mythic', rarity: 'Epic',
@@ -2419,7 +2487,7 @@
       evo: ['Combat Medic', 'Field Surgeon', 'Chief Medical Officer'],
       desc: 'No attack. Heals allied summons, gives nearby troops +10% attack speed, and from Lv 3 restores 1 life after cleared waves.' },
     { id: 'heavyWeapons', faction: 'Modern', attackType: 'Rocket Barrage', category: 'mythic', rarity: 'Epic',
-      name: 'Heavy Weapons Specialist', cost: 600, range: 190, damage: 210, fireRate: 0.42, splash: 95, color: '#9ca3af', accent: '#fde68a', projSpeed: 360, type: 'heavy',
+      name: 'Heavy Weapons Specialist', cost: 560, range: 190, damage: 210, fireRate: 0.42, splash: 95, color: '#9ca3af', accent: '#fde68a', projSpeed: 360, type: 'heavy',
       evo: ['Gunner', 'Demolitions Expert', 'Siege Marshal'],
       desc: 'Slow-firing rockets with huge blast radius. Every 3rd launch adds a 3-shell Barrage.' },
     // --- Futuristic ---
@@ -2478,7 +2546,7 @@
         ['Golden Transformation', 'Periodically turns nearby enemies into golden statues, immobilising them.']],
       desc: 'Economy / damage. Golden bolts, a Curse that turns kills into bonus gold, and a Transformation that freezes enemy clusters as golden statues.' },
     { id: 'venom', faction: 'Futuristic', attackType: 'Symbiote Infection', category: 'mythic', rarity: 'Mythical',
-      name: 'Venom', cost: 960, range: 150, damage: 84, fireRate: 1.5,
+      name: 'Venom', cost: 960, range: 150, damage: 92, fireRate: 1.5,
       color: '#7c3aed', accent: '#f8fafc', projSpeed: 0, type: 'venom', unlockPrice: 2700,
       evo: ['Host Bonded', 'Feral Symbiote', 'Lethal Protector'],
       ult: { name: 'Symbiote Outbreak', cd: 46, mode: 'self', icon: '\u{1F577}', blurb: 'Instant: a symbiote wave erupts and tries to infect many enemies at once.' },
@@ -2488,7 +2556,7 @@
         ['Symbiote Evolution', 'Gets stronger and faster for every enemy currently infected.']],
       desc: 'Infection / crowd control. Infected enemies switch teams for a few seconds and attack other enemies. Grows stronger with every active infection.' },
     { id: 'simoHayha', faction: 'Modern', attackType: 'Long-Range Sniper', category: 'mythic', rarity: 'Mythical',
-      name: 'Simo H\u00e4yh\u00e4 \u2014 The White Death', cost: 1150, range: 390, damage: 520, fireRate: 0.28, armorPierce: true, defaultTarget: 'strong',
+      name: 'Simo H\u00e4yh\u00e4 \u2014 The White Death', cost: 1050, range: 390, damage: 680, fireRate: 0.3, armorPierce: true, defaultTarget: 'strong',
       color: '#e0f2fe', accent: '#ffffff', projSpeed: 2600, type: 'simoHayha', unlockPrice: 2900,
       evo: ['Winter Hunter', 'Ghost of the Snow', 'The White Death'],
       ult: { name: 'One Perfect Shot', cd: 60, mode: 'enemy', icon: '\u2744', blurb: 'Click an enemy (or press again for auto-aim): a massive precision shot after a short wind-up.' },
@@ -2496,7 +2564,37 @@
         ['Deadly Precision', 'Extreme range and enormous single-target damage, but a very slow reload.'],
         ['Cold Focus', 'Each consecutive shot at the same enemy deals more damage.'],
         ['Winter Camouflage', 'While no enemy is close he is concealed: his next shot ambushes for bonus damage, and he ignores the Blizzard fire-rate penalty.']],
-      desc: 'Longest-range sniper in the game. Slow, expensive and devastating against single targets, with Cold Focus stacking on one enemy.' }
+      desc: 'Longest-range sniper in the game. Slow, expensive and devastating against single targets, with Cold Focus stacking on one enemy.' },
+    { id: 'chuck', faction: 'Creator', attackType: 'Gold Support', category: 'mythic', rarity: 'Mythical',
+      name: 'Chuck', cost: 760, range: 200, damage: 38, fireRate: 1.2, splash: 24,
+      color: '#fbbf24', accent: '#fffbeb', projSpeed: 680, type: 'chuck', unlockPrice: 2650,
+      evo: ['Chuck the Capable', 'Chuck the Magnate', 'Chuck, Master Financier'],
+      ult: { name: 'Golden Hour', cd: 55, mode: 'self', icon: '\u2726', blurb: 'Instant: a lump sum of gold, and for a while Payday and Tip Jar pay double.' },
+      abilities: [
+        ['Payday', 'While a wave is running, Chuck pays his owner gold every few seconds. Faster and bigger with every level.'],
+        ['Tip Jar', 'Every enemy that dies inside Chuck\u2019s range, whoever kills it, pays Chuck\u2019s owner a bonus on top of its normal reward.'],
+        ['Golden Hour', 'Ultimate: a lump sum of gold now, then double Payday and Tip Jar for about 11 seconds.']],
+      desc: 'The best economy support in the game. Chuck barely fights, but he pays out constantly: Payday income, a Tip Jar bounty on every nearby kill, and Golden Hour to double it all.' },
+    { id: 'lachlan', faction: 'Creator', attackType: 'Construct Builder', category: 'mythic', rarity: 'Legendary',
+      name: 'Lachlan', cost: 900, range: 215, damage: 72, fireRate: 1.1, splash: 30,
+      color: '#67e8f9', accent: '#fef9c3', projSpeed: 700, type: 'lachlan', unlockPrice: 1850,
+      evo: ['Apprentice Architect', 'Master of Forms', 'Author of Worlds'],
+      ult: { name: 'Let There Be Light', cd: 48, mode: 'point', icon: '\u2726', blurb: 'Click the battlefield: a blueprint realm slows and burns enemies and conjures Constructs inside it.' },
+      abilities: [
+        ['Genesis Bolt', 'Shapes light into bolts that burst on impact. Every fourth bolt is a Divine Spark with a much larger burst.'],
+        ['Conjure Construct', 'Regularly raises a temporary crystal Construct near the path. It shoots enemies and slows every third target.'],
+        ['Blueprint Realm', 'Ultimate: a drafted realm slows and damages enemies inside it and conjures extra Constructs.']],
+      desc: 'Builder / damage. Lachlan never stops making things: Genesis Bolts for steady damage, temporary Constructs that hold the path, and a Blueprint Realm that remakes the battlefield.' },
+    { id: 'ozan', faction: 'Creator', attackType: 'Golem Forger', category: 'mythic', rarity: 'Legendary',
+      name: 'Ozan', cost: 820, range: 190, damage: 72, fireRate: 1.0, splash: 36,
+      color: '#fb923c', accent: '#fff7ed', projSpeed: 640, type: 'ozan', unlockPrice: 1800,
+      evo: ['Clay Shaper', 'Forgemaster', 'Titan Sculptor'],
+      ult: { name: 'Mass Forging', cd: 50, mode: 'self', icon: '\u2726', blurb: 'Instant: a shockwave stuns nearby enemies and a squad of Clay Golems rises along the path.' },
+      abilities: [
+        ['Molten Clay', 'Hurls molten clay that bursts on impact.'],
+        ['Forge Golem', 'Regularly shapes a tough Clay Golem on the path. Golems block enemies and fight them.'],
+        ['Mass Forging', 'Ultimate: a stunning shockwave, then several Golems at once.']],
+      desc: 'Frontline creator. Ozan stalls the path with Clay Golems that block and fight, and Mass Forging stuns a whole crowd while raising a squad of them.' }
   ];
   NEW_MYTHICALS.forEach(d => { d.uid = 'SC-' + String(TOWER_TYPES.length + 1).padStart(3, '0'); TOWER_TYPES.push(d); });
   const NEW_ART_IDS = {}; NEW_MYTHICALS.forEach(d => { NEW_ART_IDS[d.id] = true; });
@@ -3078,6 +3176,30 @@
       grain(['#ffffff', '#22d3ee'], 3500, 1.6, 0.08);
       road(() => { along(1.6, (x, y) => { c.fillStyle = pick(['rgba(34,211,238,.45)', 'rgba(236,72,153,.4)', 'rgba(255,255,255,.12)']); c.fillRect(x, y, rr(1, 2.5), 1); }); along(30, (x, y, an) => { c.save(); c.translate(x, y); c.rotate(an + Math.PI / 2); c.strokeStyle = 'rgba(34,211,238,.2)'; c.lineWidth = 1; c.beginPath(); c.moveTo(-map.roadWidth / 2 + 4, 0); c.lineTo(map.roadWidth / 2 - 4, 0); c.stroke(); c.restore(); }, true); });
     }
+    try {                                          // extra baked scenery per realm (cached with the terrain, so it costs nothing per frame)
+      const poly = (pts, fill, stroke) => { c.beginPath(); pts.forEach((q, i) => i ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1])); c.closePath(); c.fillStyle = fill; c.fill(); if (stroke) { c.strokeStyle = stroke; c.lineWidth = 1; c.stroke(); } };
+      if (id === 'kingdom') {
+        scatter(5, 70, (x, y) => { shadow(x + 6, y + 18, 30, 8); c.fillStyle = lin(x - 18, 0, x + 18, 0, ['#e7d8b8', '#c9b48a']); c.fillRect(x - 18, y - 8, 36, 25); c.strokeStyle = '#5b4325'; c.lineWidth = 1.2; c.strokeRect(x - 18, y - 8, 36, 25);
+          poly([[x - 25, y - 7], [x, y - 30], [x + 25, y - 7]], lin(0, y - 30, 0, y - 7, ['#c2410c', '#7c2d12']), '#431407'); c.fillStyle = '#5b3a1e'; c.fillRect(x - 5, y + 3, 10, 14); c.fillStyle = '#fde68a'; c.fillRect(x + 8, y - 2, 6, 6); c.fillStyle = '#6b7280'; c.fillRect(x + 11, y - 34, 6, 11); });
+        scatter(12, 24, (x, y) => { shadow(x + 3, y + 8, 14, 5); c.fillStyle = lin(0, y - 10, 0, y + 8, ['#fde68a', '#ca8a04']); c.beginPath(); c.ellipse(x, y, 12, 10, 0, Math.PI, 0); c.lineTo(x + 12, y + 7); c.lineTo(x - 12, y + 7); c.fill(); c.strokeStyle = 'rgba(120,53,15,.45)'; c.lineWidth = 1; for (let k = -8; k <= 8; k += 4) { c.beginPath(); c.moveTo(x + k, y + 6); c.lineTo(x + k * 0.5, y - 8); c.stroke(); } });
+        scatter(16, 30, (x, y) => { const col = pick(['#f472b6', '#fde047', '#c4b5fd', '#fb923c']); for (let k = 0; k < 16; k++) { const a = r() * 6.28, d = rr(0, 16); c.fillStyle = col; c.beginPath(); c.arc(x + Math.cos(a) * d, y + Math.sin(a) * d * 0.7, rr(1.2, 2.2), 0, 7); c.fill(); c.fillStyle = '#facc15'; c.fillRect(x + Math.cos(a) * d - 0.4, y + Math.sin(a) * d * 0.7 - 0.4, 0.9, 0.9); } });
+      } else if (id === 'frozen') {
+        scatter(22, 44, (x, y) => { c.fillStyle = 'rgba(30,58,95,.28)'; c.beginPath(); c.ellipse(x + 3, y + 5, rr(26, 44), rr(8, 13), 0, 0, 7); c.fill(); c.fillStyle = lin(0, y - 14, 0, y + 8, ['#ffffff', '#cfe3f7']); c.beginPath(); c.ellipse(x, y, rr(26, 44), rr(8, 13), rr(-.1, .1), Math.PI, 0); c.fill(); });
+        scatter(13, 26, (x, y) => { shadow(x + 4, y + 8, 16, 5); for (let k = -1; k <= 1; k++) { const h = rr(16, 30) - Math.abs(k) * 6, w = 5.5; poly([[x + k * 8 - w, y + 6], [x + k * 8, y + 6 - h], [x + k * 8 + w, y + 6]], lin(0, y - h, 0, y + 6, ['#e0f2fe', '#38bdf8']), '#0c4a6e'); poly([[x + k * 8 - 1, y + 4], [x + k * 8, y + 6 - h], [x + k * 8 + 1.5, y + 4]], 'rgba(255,255,255,.65)'); } });
+      } else if (id === 'jurassic') {
+        scatter(9, 40, (x, y) => { rock(x, y, rr(11, 17), '#6b6a5f'); c.fillStyle = 'rgba(101,163,13,.75)'; c.beginPath(); c.ellipse(x - 2, y - 7, rr(8, 12), 4, 0, Math.PI, 0); c.fill(); });
+        scatter(8, 46, (x, y) => { c.save(); c.translate(x, y); c.rotate(rr(-0.5, 0.5)); shadow(2, 8, 30, 6); c.fillStyle = lin(0, -7, 0, 7, ['#7c4f2b', '#3f2411']); c.beginPath(); c.roundRect(-30, -6, 60, 13, 6); c.fill(); c.strokeStyle = 'rgba(0,0,0,.4)'; c.lineWidth = 1; for (let k = -22; k < 26; k += 9) { c.beginPath(); c.moveTo(k, -5); c.lineTo(k + 2, 6); c.stroke(); } c.fillStyle = '#65a30d'; c.fillRect(-14, -8, 18, 3); c.restore(); });
+        scatter(5, 50, (x, y) => { c.strokeStyle = 'rgba(231,229,200,.8)'; c.lineWidth = 2.4; c.lineCap = 'round'; for (let k = 0; k < 6; k++) { c.beginPath(); c.arc(x + k * 7 - 18, y, 11 - Math.abs(k - 2.5) * 1.2, Math.PI * 1.08, Math.PI * 1.92); c.stroke(); } c.beginPath(); c.moveTo(x - 22, y); c.lineTo(x + 22, y); c.stroke(); });
+      } else if (id === 'olympus') {
+        scatter(9, 38, (x, y) => { shadow(x + 5, y + 14, 15, 5); const h = rr(26, 46); c.fillStyle = lin(x - 9, 0, x + 9, 0, ['#cbd5e1', '#ffffff', '#94a3b8']); c.fillRect(x - 9, y - h + 14, 18, h); c.strokeStyle = 'rgba(100,116,139,.45)'; c.lineWidth = 1; for (let k = -6; k <= 6; k += 4) { c.beginPath(); c.moveTo(x + k, y - h + 16); c.lineTo(x + k, y + 13); c.stroke(); }
+          c.fillStyle = '#e2e8f0'; c.fillRect(x - 12, y + 10, 24, 5); poly([[x - 9, y - h + 14], [x - 4, y - h + 8], [x + 1, y - h + 13], [x + 5, y - h + 9], [x + 9, y - h + 14]], '#f1f5f9', 'rgba(100,116,139,.5)'); });
+        scatter(14, 26, (x, y) => { shadow(x + 2, y + 7, 12, 4); for (let k = 0; k < 7; k++) { const a = k * 0.9; c.fillStyle = k % 2 ? '#4d7c0f' : '#65a30d'; c.beginPath(); c.ellipse(x + Math.cos(a) * 7, y + Math.sin(a) * 4, 6, 2.6, a, 0, 7); c.fill(); } });
+      } else if (id === 'cyberpunk') {
+        scatter(14, 34, (x, y) => { const col = pick(['34,211,238', '236,72,153']), rx = rr(22, 44), g = c.createRadialGradient(x, y, 0, x, y, rx); g.addColorStop(0, `rgba(${col},.32)`); g.addColorStop(0.7, 'rgba(10,18,32,.55)'); g.addColorStop(1, 'rgba(10,18,32,0)'); c.fillStyle = g; c.beginPath(); c.ellipse(x, y, rx, rx * 0.4, 0, 0, 7); c.fill(); c.strokeStyle = `rgba(${col},.5)`; c.lineWidth = 1; c.beginPath(); c.ellipse(x, y, rx * 0.5, rx * 0.2, 0, 0, 7); c.stroke(); });
+        scatter(7, 44, (x, y) => { const col = pick(['#22d3ee', '#ec4899', '#a78bfa']); c.save(); c.shadowColor = col; c.shadowBlur = 14; c.strokeStyle = col; c.lineWidth = 2; c.strokeRect(x - 22, y - 14, 44, 28); c.restore(); c.fillStyle = 'rgba(8,16,30,.7)'; c.fillRect(x - 21, y - 13, 42, 26); c.fillStyle = col; for (let k = 0; k < 4; k++) c.fillRect(x - 16, y - 8 + k * 5, rr(8, 30), 2); });
+        scatter(16, 26, (x, y) => { c.fillStyle = '#0f172a'; c.fillRect(x - 10, y - 7, 20, 14); c.strokeStyle = 'rgba(34,211,238,.45)'; c.lineWidth = 1; for (let k = -6; k <= 6; k += 4) { c.beginPath(); c.moveTo(x + k, y - 6); c.lineTo(x + k, y + 6); c.stroke(); } });
+      }
+    } catch (e) { /* scenery is cosmetic: never block the map */ }
     c.globalCompositeOperation = 'source-atop';
     const v = c.createRadialGradient(W / 2, H / 2, H * 0.45, W / 2, H / 2, W * 0.62); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.38)');
     c.fillStyle = v; c.fillRect(0, 0, W, H); c.globalCompositeOperation = 'source-over';
@@ -3312,7 +3434,7 @@
   const PSCENE = {
     Medieval: ['#1a2238', '#4a3524', 'castle'], Prehistoric: ['#4a2314', '#173a1f', 'volcano'],
     Mythological: ['#1d2c5a', '#5a4a86', 'columns'], Magic: ['#1b1148', '#0b3050', 'stars'],
-    Modern: ['#101f2d', '#27382c', 'city'], Futuristic: ['#080d2b', '#2a0e4a', 'grid']
+    Modern: ['#101f2d', '#27382c', 'city'], Futuristic: ['#080d2b', '#2a0e4a', 'grid'], Creator: ['#0f1b3d', '#33205f', 'stars']
   };
   const PR = {
     archer: { k: 'h', h: 'hood', w: 'bow', sk: '#e6b98f', cp: '#14532d' },
@@ -4161,6 +4283,203 @@
     if (T >= 2) for (let i = 0; i < 6; i++) star4(c, 100 + Math.cos(tm * 0.8 + i * 1.1) * 88, 120 + Math.sin(tm * 1.3 + i * 2) * 70, 3 + (i % 3), '#fef3c7', 0.5 + 0.4 * Math.sin(tm * 3 + i));
   };
 
+  NA.lachlan = (c, def, tm) => {
+    const T = ART_TIER, CY = '#67e8f9', CYL = '#a5f3fc', GOLD = '#fde68a', INK = '#1e1b4b';
+    const cube = (x, y, s, rot) => {                      // small floating drafted cube
+      c.save(); c.translate(x, y); c.rotate(rot);
+      pGlow(c, 0, 0, s * 2.2, CY, 0.4);
+      pPoly(c, [[0, -s], [s, -s * 0.5], [0, 0], [-s, -s * 0.5]], '#ecfeff', '#0e7490', 0.9);
+      pPoly(c, [[-s, -s * 0.5], [0, 0], [0, s], [-s, s * 0.5]], '#22d3ee', '#0e7490', 0.9);
+      pPoly(c, [[s, -s * 0.5], [0, 0], [0, s], [s, s * 0.5]], '#0891b2', '#0e7490', 0.9);
+      c.restore();
+    };
+    // blueprint circle on the floor
+    c.save(); c.translate(100, 214); c.scale(1, 0.3);
+    c.strokeStyle = CY; c.lineWidth = 2.5; c.beginPath(); c.arc(0, 0, 64, 0, 7); c.stroke();
+    if (T >= 2) { c.rotate(tm * 0.3); c.lineWidth = 1.6; c.strokeStyle = GOLD; c.beginPath(); c.arc(0, 0, 48, 0, 7); c.stroke(); for (let i = 0; i < 12; i++) { const a = i * 0.5236; c.beginPath(); c.moveTo(Math.cos(a) * 48, Math.sin(a) * 48); c.lineTo(Math.cos(a) * 64, Math.sin(a) * 64); c.stroke(); } }
+    if (T >= 3) { c.beginPath(); for (let i = 0; i <= 3; i++) { const a = i * 2.0944; c.lineTo(Math.cos(a) * 48, Math.sin(a) * 48); } c.stroke(); }
+    c.restore();
+    pGlow(c, 100, 214, 70, CY, 0.18 + 0.04 * T);
+    // halo behind the head
+    const hr = 30 + T * 2; pGlow(c, 100, 70, hr * 2, GOLD, 0.28 + 0.05 * T);
+    c.save(); c.translate(100, 70); c.rotate(tm * 0.5); c.strokeStyle = GOLD; c.lineWidth = T >= 3 ? 3 : 2; c.beginPath(); c.arc(0, 0, hr, 0, 7); c.stroke();
+    c.lineWidth = 1.2; for (let i = 0; i < 8 + T * 2; i++) { const a = i * 6.283 / (8 + T * 2); c.beginPath(); c.moveTo(Math.cos(a) * hr, Math.sin(a) * hr); c.lineTo(Math.cos(a) * (hr + 7), Math.sin(a) * (hr + 7)); c.stroke(); }
+    c.restore();
+    const nC = T === 1 ? 1 : T === 2 ? 3 : T === 3 ? 4 : 6;
+    for (let k = 0; k < nC; k++) { const a = tm * 0.9 + k * 6.283 / nC; if (Math.sin(a) <= 0) cube(100 + Math.cos(a) * 76, 128 + Math.sin(a) * 22, 6 + (k % 2) * 2, tm * 0.4 + k); }
+    nFig(c, { body: INK, cape: T >= 3 ? '#312e81' : '#1e1b4b', skin: '#f1d3b0', legs: '#0f0d2e', boots: '#0b0a1f', trim: T >= 2 ? GOLD : CY }, tm);
+    // robe panels and sash
+    pPoly(c, [[74, 104], [96, 106], [92, 206], [66, 200]], '#27235e', T >= 2 ? GOLD : CY, 1.1);
+    pPoly(c, [[126, 104], [104, 106], [108, 206], [134, 200]], '#27235e', T >= 2 ? GOLD : CY, 1.1);
+    pPoly(c, [[96, 104], [104, 104], [104, 190], [96, 190]], '#ecfeff', CYL, 0.8);
+    for (let i = 0; i < 4; i++) { c.fillStyle = CY; c.fillRect(97, 116 + i * 16, 6, 2.5); }
+    c.save(); c.globalAlpha = 0.18; c.strokeStyle = '#fff'; c.lineWidth = 3; c.beginPath(); c.moveTo(80, 112); c.lineTo(84, 170); c.stroke(); c.restore();
+    // shoulders
+    pPoly(c, [[62, 104], [78, 98], [82, 112], [60, 118]], '#312e81', GOLD, 1); pPoly(c, [[138, 104], [122, 98], [118, 112], [140, 118]], '#312e81', GOLD, 1);
+    // hair, circlet, eyes
+    c.fillStyle = '#f8fafc'; c.beginPath(); c.moveTo(80, 72); c.quadraticCurveTo(78, 44, 100, 44); c.quadraticCurveTo(122, 44, 120, 72); c.lineTo(114, 60); c.quadraticCurveTo(108, 52, 100, 55); c.quadraticCurveTo(92, 52, 86, 60); c.closePath(); c.fill();
+    c.fillStyle = '#e2e8f0'; c.beginPath(); c.moveTo(80, 70); c.quadraticCurveTo(70, 100, 78, 128); c.lineTo(86, 100); c.closePath(); c.moveTo(120, 70); c.quadraticCurveTo(130, 100, 122, 128); c.lineTo(114, 100); c.closePath(); c.fill();
+    c.strokeStyle = GOLD; c.lineWidth = 2; c.beginPath(); c.moveTo(82, 58); c.quadraticCurveTo(100, 50, 118, 58); c.stroke(); pGlow(c, 100, 55, 10, CYL, 0.9); star4(c, 100, 54, 5, '#fff', 0.95);
+    nEyes(c, CY, 73); pGlow(c, 92, 73, 8, CY, 0.7); pGlow(c, 108, 73, 8, CY, 0.7);
+    c.strokeStyle = 'rgba(120,70,40,.55)'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(100, 73); c.quadraticCurveTo(98, 81, 101, 83); c.stroke();
+    c.strokeStyle = '#8a4b38'; c.lineWidth = 1.6; c.beginPath(); c.moveTo(94, 90); c.quadraticCurveTo(100, 92, 106, 90); c.stroke();
+    // right hand: drafting compass that draws light
+    const sw = Math.sin(tm * 2) * 3; c.save(); c.translate(152, 132); c.rotate(-0.15 + sw * 0.01);
+    pGlow(c, 0, 10, 36, GOLD, 0.35);
+    c.strokeStyle = '#e2e8f0'; c.lineWidth = 3; c.lineCap = 'round'; c.beginPath(); c.moveTo(0, -22); c.lineTo(-13, 34); c.moveTo(0, -22); c.lineTo(13, 34); c.stroke();
+    c.strokeStyle = GOLD; c.lineWidth = 1.4; c.beginPath(); c.moveTo(0, -22); c.lineTo(-13, 34); c.moveTo(0, -22); c.lineTo(13, 34); c.stroke();
+    c.fillStyle = GOLD; c.beginPath(); c.arc(0, -22, 4, 0, 7); c.fill(); pPoly(c, [[-14, 34], [-12, 34], [-13, 42]], '#fff'); pPoly(c, [[12, 34], [14, 34], [13, 42]], CYL);
+    c.save(); c.translate(0, 38); c.scale(1, 0.35); c.strokeStyle = CYL; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, 14 + Math.sin(tm * 3) * 2, 0, 7); c.stroke(); c.restore();
+    c.restore();
+    // left hand: a small world being shaped
+    const bob = Math.sin(tm * 2.4) * 3; pGlow(c, 48, 122 + bob, 30, CY, 0.5);
+    c.fillStyle = pLG(c, 38, 108 + bob, 58, 136 + bob, ['#bae6fd', '#38bdf8', '#075985']); c.beginPath(); c.arc(48, 122 + bob, 11, 0, 7); c.fill();
+    c.fillStyle = '#4ade80'; c.beginPath(); c.ellipse(45, 118 + bob, 4.5, 3, 0.5, 0, 7); c.ellipse(53, 127 + bob, 3.5, 2.5, -0.3, 0, 7); c.fill();
+    c.strokeStyle = GOLD; c.lineWidth = 1.2; c.save(); c.translate(48, 122 + bob); c.scale(1, 0.35); c.rotate(tm * 1.5); c.beginPath(); c.arc(0, 0, 17, 0, 7); c.stroke(); c.restore();
+    for (let k = 0; k < nC; k++) { const a = tm * 0.9 + k * 6.283 / nC; if (Math.sin(a) > 0) cube(100 + Math.cos(a) * 76, 128 + Math.sin(a) * 22, 6 + (k % 2) * 2, tm * 0.4 + k); }
+    if (T >= 2) for (let i = 0; i < 6; i++) star4(c, 100 + Math.cos(tm * 0.8 + i * 1.1) * 88, 120 + Math.sin(tm * 1.3 + i * 2) * 70, 3 + (i % 3), '#fef9c3', 0.5 + 0.4 * Math.sin(tm * 3 + i));
+    if (T >= 4) {
+      pGlow(c, 100, 100, 110, GOLD, 0.2);
+      c.save(); c.translate(100, 70); c.rotate(-tm * 0.2); for (let i = 0; i < 12; i++) { const a = i * 0.5236; pPoly(c, [[Math.cos(a - 0.05) * (hr + 8), Math.sin(a - 0.05) * (hr + 8)], [Math.cos(a + 0.05) * (hr + 8), Math.sin(a + 0.05) * (hr + 8)], [Math.cos(a) * (hr + 26), Math.sin(a) * (hr + 26)]], 'rgba(253,230,138,0.7)'); } c.restore();
+    }
+  };
+
+  NA.chuck = (c, def, tm) => {
+    const T = ART_TIER, G = '#fbbf24', GL = '#fde68a', GD = '#92400e';
+    const coin = (x, y, r, rot, ph) => {                   // floating gold coin, turning on its axis
+      c.save(); c.translate(x, y); c.rotate(rot); pGlow(c, 0, 0, r * 2.2, G, 0.4);
+      c.scale(Math.max(0.28, Math.abs(Math.cos(ph))), 1);
+      c.fillStyle = pLG(c, -r, -r, r, r, [GL, G, GD]); c.beginPath(); c.arc(0, 0, r, 0, 7); c.fill();
+      c.strokeStyle = '#78350f'; c.lineWidth = 1.2; c.stroke();
+      c.strokeStyle = GL; c.lineWidth = 1; c.beginPath(); c.arc(0, 0, r * 0.62, 0, 7); c.stroke(); c.restore();
+    };
+    c.save(); c.translate(100, 214); c.scale(1, 0.3); c.strokeStyle = G; c.lineWidth = 3; c.beginPath(); c.arc(0, 0, 62, 0, 7); c.stroke();
+    if (T >= 2) { c.rotate(tm * 0.35); c.lineWidth = 1.6; c.strokeStyle = GL; c.setLineDash([8, 7]); c.beginPath(); c.arc(0, 0, 48, 0, 7); c.stroke(); }
+    c.restore();
+    pGlow(c, 100, 214, 66, G, 0.16 + 0.04 * T);
+    const nC = T === 1 ? 2 : T === 2 ? 3 : T === 3 ? 5 : 7;
+    for (let k = 0; k < nC; k++) { const a = tm * 0.9 + k * 6.283 / nC; if (Math.sin(a) <= 0) coin(100 + Math.cos(a) * 76, 126 + Math.sin(a) * 22, 7 + (k % 2) * 2, 0.2 * Math.sin(tm + k), tm * 2.2 + k); }
+    nFig(c, { body: '#14532d', cape: T >= 3 ? '#78350f' : null, skin: '#e8b48c', legs: '#1c1917', boots: '#1c1917', trim: G }, tm);
+    if (T >= 2) { pPoly(c, [[74, 150], [96, 154], [92, 206], [68, 200]], '#14532d', G, 1.1); pPoly(c, [[126, 150], [104, 154], [108, 206], [132, 200]], '#14532d', G, 1.1); }
+    pPoly(c, [[88, 104], [112, 104], [116, 166], [84, 166]], '#b45309', GD, 1.1);          // waistcoat
+    pPoly(c, [[92, 102], [108, 102], [100, 130]], '#fffbeb', '#d6d3d1', 0.8);              // shirt
+    pPoly(c, [[82, 104], [94, 101], [100, 132], [80, 150]], '#166534', G, 1.1); pPoly(c, [[118, 104], [106, 101], [100, 132], [120, 150]], '#166534', G, 1.1);
+    for (let i = 0; i < 3; i++) { c.fillStyle = GL; c.beginPath(); c.arc(100, 138 + i * 9, 2, 0, 7); c.fill(); }
+    pPoly(c, [[100, 108], [92, 104], [92, 112]], '#7f1d1d'); pPoly(c, [[100, 108], [108, 104], [108, 112]], '#7f1d1d'); c.fillStyle = '#991b1b'; c.beginPath(); c.arc(100, 108, 2.4, 0, 7); c.fill();
+    c.strokeStyle = GL; c.lineWidth = 1.4; c.beginPath(); c.moveTo(112, 150); c.quadraticCurveTo(122, 158, 116, 146); c.stroke();   // watch chain
+    if (T >= 3) { pPoly(c, [[62, 104], [78, 98], [82, 112], [60, 118]], GD, GL, 1.2); pPoly(c, [[138, 104], [122, 98], [118, 112], [140, 118]], GD, GL, 1.2); }
+    // head: hair, moustache, monocle, grin
+    c.fillStyle = '#4a2c17'; c.beginPath(); c.moveTo(81, 70); c.quadraticCurveTo(79, 52, 100, 51); c.quadraticCurveTo(121, 52, 119, 70); c.lineTo(113, 60); c.quadraticCurveTo(106, 56, 100, 58); c.quadraticCurveTo(92, 56, 87, 60); c.closePath(); c.fill();
+    c.fillStyle = '#f8fafc'; c.beginPath(); c.ellipse(92, 72, 4, 2.6, 0, 0, 7); c.ellipse(108, 72, 4, 2.6, 0, 0, 7); c.fill();
+    c.fillStyle = '#3b2412'; c.beginPath(); c.arc(92.5, 72, 1.9, 0, 7); c.arc(108.5, 72, 1.9, 0, 7); c.fill();
+    c.strokeStyle = '#4a2c17'; c.lineWidth = 2; c.lineCap = 'round'; c.beginPath(); c.moveTo(86, 66); c.lineTo(96, 67); c.moveTo(104, 67); c.lineTo(114, 66); c.stroke();
+    c.strokeStyle = G; c.lineWidth = 1.6; c.beginPath(); c.arc(108, 72, 6.5, 0, 7); c.stroke(); c.beginPath(); c.moveTo(114, 74); c.quadraticCurveTo(122, 90, 118, 108); c.stroke();
+    c.fillStyle = '#4a2c17'; c.beginPath(); c.moveTo(100, 82); c.quadraticCurveTo(92, 80, 87, 84); c.quadraticCurveTo(93, 87, 100, 84); c.quadraticCurveTo(107, 87, 113, 84); c.quadraticCurveTo(108, 80, 100, 82); c.fill();
+    c.strokeStyle = '#7a3b2e'; c.lineWidth = 1.6; c.beginPath(); c.moveTo(92, 89); c.quadraticCurveTo(100, 94, 108, 89); c.stroke();
+    // top hat
+    if (T >= 4) { pGlow(c, 100, 36, 70, G, 0.35); c.save(); c.translate(100, 40); c.rotate(-tm * 0.2); for (let i = 0; i < 12; i++) { const a = i * 0.5236; pPoly(c, [[Math.cos(a - 0.06) * 34, Math.sin(a - 0.06) * 34], [Math.cos(a + 0.06) * 34, Math.sin(a + 0.06) * 34], [Math.cos(a) * 54, Math.sin(a) * 54]], 'rgba(253,230,138,0.75)'); } c.restore(); }
+    c.fillStyle = '#0f172a'; c.beginPath(); c.ellipse(100, 52, 30, 6, 0, 0, 7); c.fill(); c.fillRect(83, 16, 34, 36);
+    c.beginPath(); c.ellipse(100, 16, 17, 4, 0, 0, 7); c.fill();
+    c.fillStyle = '#1e293b'; c.fillRect(86, 20, 5, 28);
+    c.fillStyle = G; c.fillRect(83, 40, 34, 8); c.fillStyle = GL; c.fillRect(94, 40, 12, 8); c.fillStyle = GD; c.fillRect(97, 42, 6, 4);
+    // right hand: a huge coin held up
+    const bob = Math.sin(tm * 2.4) * 3; pGlow(c, 154, 100 + bob, 38, G, 0.55);
+    coin(154, 102 + bob, 17, 0, tm * 1.6);
+    c.fillStyle = '#e8b48c'; c.beginPath(); c.arc(152, 136, 7, 0, 7); c.fill();
+    // left hand: gold-topped cane
+    c.strokeStyle = '#1c1917'; c.lineWidth = 4; c.lineCap = 'round'; c.beginPath(); c.moveTo(50, 146); c.lineTo(44, 220); c.stroke();
+    c.fillStyle = pLG(c, 40, 132, 60, 150, [GL, G, GD]); c.beginPath(); c.arc(50, 142, 8, 0, 7); c.fill(); c.strokeStyle = '#78350f'; c.lineWidth = 1; c.stroke();
+    c.fillStyle = '#e8b48c'; c.beginPath(); c.arc(56, 152, 7, 0, 7); c.fill();
+    for (let k = 0; k < nC; k++) { const a = tm * 0.9 + k * 6.283 / nC; if (Math.sin(a) > 0) coin(100 + Math.cos(a) * 76, 126 + Math.sin(a) * 22, 7 + (k % 2) * 2, 0.2 * Math.sin(tm + k), tm * 2.2 + k); }
+    if (T >= 2) for (let i = 0; i < 7; i++) star4(c, 100 + Math.cos(tm * 0.8 + i * 1.1) * 88, 120 + Math.sin(tm * 1.3 + i * 2) * 70, 3 + (i % 3), '#fef9c3', 0.5 + 0.4 * Math.sin(tm * 3 + i));
+  };
+
+  NA.ozan = (c, def, tm) => {
+    const T = ART_TIER, OR = '#fb923c', ORL = '#fed7aa', EM = '#f97316';
+    const chunk = (x, y, s, rot) => {                       // floating clay chunk with a molten seam
+      c.save(); c.translate(x, y); c.rotate(rot); pGlow(c, 0, 0, s * 2.4, EM, 0.35);
+      pPoly(c, [[-s, -s * 0.4], [-s * 0.3, -s], [s * 0.9, -s * 0.5], [s, s * 0.5], [0, s], [-s * 0.8, s * 0.6]], '#9a3412', '#431407', 1);
+      c.strokeStyle = ORL; c.lineWidth = 1.2; c.beginPath(); c.moveTo(-s * 0.5, -s * 0.2); c.lineTo(0, 0); c.lineTo(s * 0.5, s * 0.1); c.stroke(); c.restore();
+    };
+    c.save(); c.translate(100, 214); c.scale(1, 0.3); c.strokeStyle = OR; c.lineWidth = 3.5; c.beginPath(); c.arc(0, 0, 64, 0, 7); c.stroke();
+    if (T >= 2) { c.rotate(tm * 0.3); c.lineWidth = 2; c.strokeStyle = ORL; for (let i = 0; i < 10; i++) { const a = i * 0.6283; c.beginPath(); c.arc(0, 0, 50, a, a + 0.32); c.stroke(); } }
+    c.restore();
+    pGlow(c, 100, 214, 72, EM, 0.2 + 0.04 * T);
+    const nC = T === 1 ? 2 : T === 2 ? 3 : T === 3 ? 4 : 6;
+    for (let k = 0; k < nC; k++) { const a = tm * 0.8 + k * 6.283 / nC; if (Math.sin(a) <= 0) chunk(100 + Math.cos(a) * 78, 128 + Math.sin(a) * 24, 6 + (k % 3) * 1.5, tm * 0.5 + k); }
+    if (T >= 4) { pGlow(c, 100, 70, 90, EM, 0.4); c.save(); c.translate(100, 66); c.rotate(tm * 0.25); c.strokeStyle = ORL; c.lineWidth = 3; c.shadowColor = EM; c.shadowBlur = 12; c.beginPath(); c.arc(0, 0, 36, 0, 7); c.stroke(); c.restore(); }
+    nFig(c, { body: '#7c2d12', skin: '#c68642', legs: '#3b1d0e', boots: '#1c1917', trim: OR, bulk: 1.14 }, tm);
+    c.save(); c.translate(100, 0); c.scale(1.14, 1); c.translate(-100, 0);
+    pPoly(c, [[80, 108], [120, 108], [126, 198], [74, 198]], '#92400e', '#451a03', 1.4);   // leather apron
+    pPoly(c, [[84, 150], [98, 150], [98, 168], [84, 168]], '#78350f', '#451a03', 1); pPoly(c, [[102, 150], [116, 150], [116, 168], [102, 168]], '#78350f', '#451a03', 1);
+    c.strokeStyle = '#451a03'; c.lineWidth = 2.4; c.beginPath(); c.moveTo(84, 108); c.lineTo(92, 96); c.moveTo(116, 108); c.lineTo(108, 96); c.stroke();
+    c.fillStyle = EM; c.fillRect(66, 112, 10, 4); c.fillRect(124, 112, 10, 4);               // arm bands
+    if (T >= 3) { pPoly(c, [[58, 106], [78, 96], [84, 112], [58, 120]], '#57534e', ORL, 1.2); pPoly(c, [[142, 106], [122, 96], [116, 112], [142, 120]], '#57534e', ORL, 1.2); }
+    c.fillStyle = '#1c1210'; c.beginPath(); c.moveTo(81, 70); c.quadraticCurveTo(80, 48, 100, 47); c.quadraticCurveTo(120, 48, 119, 70); c.lineTo(113, 58); c.quadraticCurveTo(106, 52, 100, 55); c.quadraticCurveTo(92, 52, 87, 58); c.closePath(); c.fill();
+    c.fillStyle = '#1c1210'; c.beginPath(); c.moveTo(81, 76); c.quadraticCurveTo(82, 98, 100, 100); c.quadraticCurveTo(118, 98, 119, 76); c.quadraticCurveTo(112, 88, 100, 87); c.quadraticCurveTo(88, 88, 81, 76); c.fill();
+    c.strokeStyle = '#1c1210'; c.lineWidth = 2.8; c.lineCap = 'round'; c.beginPath(); c.moveTo(85, 65); c.lineTo(96, 67); c.moveTo(104, 67); c.lineTo(115, 65); c.stroke();
+    c.fillStyle = '#fff7ed'; c.beginPath(); c.ellipse(92, 72, 3.8, 2.4, 0, 0, 7); c.ellipse(108, 72, 3.8, 2.4, 0, 0, 7); c.fill(); c.fillStyle = '#b45309'; c.beginPath(); c.arc(92.5, 72, 1.8, 0, 7); c.arc(108.5, 72, 1.8, 0, 7); c.fill();
+    c.strokeStyle = '#a16207'; c.lineWidth = 3; c.beginPath(); c.moveTo(80, 56); c.quadraticCurveTo(100, 50, 120, 56); c.stroke();   // goggles on the forehead
+    [90, 110].forEach(x => { c.fillStyle = '#a16207'; c.beginPath(); c.arc(x, 55, 6.5, 0, 7); c.fill(); c.fillStyle = '#7dd3fc'; c.beginPath(); c.arc(x, 55, 4.2, 0, 7); c.fill(); pGlow(c, x, 55, 8, '#bae6fd', 0.5); });
+    c.restore();
+    // right hand: forge hammer with a molten face
+    const sw = Math.sin(tm * 2.2) * 0.12; c.save(); c.translate(156, 138); c.rotate(0.35 + sw);
+    c.fillStyle = '#78350f'; c.fillRect(-3, -56, 6, 62); pGlow(c, 0, -60, 36, EM, 0.55 + 0.15 * Math.sin(tm * 5));
+    pPoly(c, [[-17, -76], [17, -76], [17, -52], [-17, -52]], pLG(c, 0, -76, 0, -52, ['#9ca3af', '#4b5563', '#1f2937']), '#111827', 1.6);
+    c.fillStyle = EM; c.fillRect(-17, -62, 34, 4); c.fillStyle = ORL; c.fillRect(-10, -61, 20, 1.6);
+    c.restore();
+    c.fillStyle = '#c68642'; c.beginPath(); c.arc(152, 140, 8, 0, 7); c.fill();
+    // left hand: a tiny golem being shaped
+    const bob = Math.sin(tm * 2.4) * 2.5; pGlow(c, 50, 136 + bob, 26, EM, 0.45);
+    c.fillStyle = '#9a3412'; c.strokeStyle = '#431407'; c.lineWidth = 1.2;
+    c.beginPath(); c.roundRect(43, 126 + bob, 14, 14, 3); c.fill(); c.stroke(); c.beginPath(); c.roundRect(46, 117 + bob, 8, 9, 2); c.fill(); c.stroke();
+    c.fillStyle = '#fde047'; c.fillRect(47, 120 + bob, 2, 2); c.fillRect(51, 120 + bob, 2, 2);
+    c.fillStyle = '#c68642'; c.beginPath(); c.arc(50, 150, 8, 0, 7); c.fill();
+    for (let k = 0; k < nC; k++) { const a = tm * 0.8 + k * 6.283 / nC; if (Math.sin(a) > 0) chunk(100 + Math.cos(a) * 78, 128 + Math.sin(a) * 24, 6 + (k % 3) * 1.5, tm * 0.5 + k); }
+    if (T >= 2) for (let i = 0; i < (T >= 4 ? 18 : 10); i++) { const ph = (tm * 0.4 + i * 0.19) % 1, x = 40 + ((i * 53) % 120), y = 220 - ph * 190; c.fillStyle = `rgba(251,146,60,${0.8 * (1 - ph)})`; c.fillRect(x, y, 2.4, 2.4); }
+  };
+
+  // --- signature effects layered behind and in front of the Creators' portraits ---
+  {
+    const wrap = (id, back, front) => { const base = NA[id]; NA[id] = (c, def, tm) => { c.save(); back(c, tm, ART_TIER); c.restore(); base(c, def, tm); c.save(); front(c, tm, ART_TIER); c.restore(); }; };
+    wrap('chuck', (c, tm, T) => {                           // rotating sunburst of golden light and a glowing floor
+      c.globalCompositeOperation = 'lighter'; c.save(); c.translate(100, 96); c.rotate(tm * 0.15); const n = 12 + T * 2;
+      for (let i = 0; i < n; i++) { const a = i * 6.283 / n, w = 0.07, R = 96 + (i % 2) * 18, g = c.createLinearGradient(0, 0, Math.cos(a) * R, Math.sin(a) * R); g.addColorStop(0, 'rgba(253,224,71,0)'); g.addColorStop(0.35, 'rgba(253,224,71,' + (0.14 + 0.03 * T) + ')'); g.addColorStop(1, 'rgba(253,224,71,0)'); c.fillStyle = g; c.beginPath(); c.moveTo(0, 0); c.lineTo(Math.cos(a - w) * R, Math.sin(a - w) * R); c.lineTo(Math.cos(a + w) * R, Math.sin(a + w) * R); c.closePath(); c.fill(); }
+      c.restore(); pGlow(c, 100, 214, 80, '#fbbf24', 0.25 + 0.05 * Math.sin(tm * 3));
+    }, (c, tm, T) => {                                      // a fountain of coins from the raised hand, and glints
+      const n = 3 + T * 2;
+      for (let i = 0; i < n; i++) {
+        const ph = (tm * 0.55 + i / n) % 1, al = Math.sin(ph * Math.PI), x = 154 + (i % 2 ? 1 : -1) * (8 + i * 5) * ph, y = 100 - 64 * Math.sin(ph * Math.PI) + 40 * ph, sq = Math.abs(Math.cos(tm * 8 + i)) * 3.4 + 0.8;
+        c.globalAlpha = al; c.fillStyle = '#fbbf24'; c.strokeStyle = '#92400e'; c.lineWidth = 1; c.beginPath(); c.ellipse(x, y, sq, 4, 0, 0, 7); c.fill(); c.stroke(); c.fillStyle = '#fff7d6'; c.fillRect(x - 0.6, y - 2.4, 1.2, 2);
+      }
+      c.globalAlpha = 1; c.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < 5 + T * 2; i++) star4(c, 100 + Math.cos(tm * 0.7 + i * 2.3) * 84, 110 + Math.sin(tm * 1.1 + i * 1.7) * 80, 2.5 + (i % 3), '#fef9c3', 0.4 + 0.5 * Math.abs(Math.sin(tm * 2.5 + i)));
+    });
+    wrap('lachlan', (c, tm, T) => {                         // a vast rotating blueprint mandala behind him
+      c.globalCompositeOperation = 'lighter'; c.save(); c.translate(100, 112); c.rotate(tm * 0.2); c.strokeStyle = 'rgba(103,232,249,' + (0.22 + 0.04 * T) + ')'; c.lineWidth = 1.4;
+      [92, 74, 56].forEach(R => { c.beginPath(); c.arc(0, 0, R, 0, 7); c.stroke(); for (let k = 0; k < 24; k++) { const a = k * 0.2618, q = R - (k % 3 ? 3 : 7); c.beginPath(); c.moveTo(Math.cos(a) * R, Math.sin(a) * R); c.lineTo(Math.cos(a) * q, Math.sin(a) * q); c.stroke(); } });
+      c.rotate(-tm * 0.5); for (let k = 0; k < 2; k++) { c.beginPath(); for (let i = 0; i <= 3; i++) { const a = i * 2.0944 + k * 3.1416; c.lineTo(Math.cos(a) * 74, Math.sin(a) * 74); } c.stroke(); }
+      c.restore();
+    }, (c, tm, T) => {                                      // drifting glyph motes and, at higher tiers, shafts of creation light
+      c.globalCompositeOperation = 'lighter';
+      if (T >= 3) { const g = c.createLinearGradient(0, 0, 0, 230); g.addColorStop(0, 'rgba(165,243,252,.16)'); g.addColorStop(1, 'rgba(165,243,252,0)'); c.fillStyle = g; c.fillRect(66, 0, 22, 230); c.fillRect(112, 0, 14, 230); }
+      for (let i = 0; i < 10 + T * 3; i++) { const ph = (tm * 0.3 + i * 0.137) % 1, x = 26 + (i * 61) % 148, y = 230 - ph * 220, a = Math.sin(ph * Math.PI) * 0.8; c.save(); c.translate(x, y); c.rotate(tm + i); c.strokeStyle = (i & 1 ? 'rgba(254,249,195,' : 'rgba(103,232,249,') + a + ')'; c.lineWidth = 1.2; c.strokeRect(-2.5, -2.5, 5, 5); c.restore(); }
+    });
+    wrap('ozan', (c, tm, T) => {                            // forge glow, heat rings and (top tier) cracks of lava in the floor
+      c.globalCompositeOperation = 'lighter'; pGlow(c, 100, 150, 110, '#f97316', 0.26 + 0.06 * Math.sin(tm * 4));
+      c.save(); c.translate(100, 214); c.scale(1, 0.3); for (let i = 0; i < 3; i++) { const q = ((tm * 0.45 + i / 3) % 1); c.strokeStyle = 'rgba(251,146,60,' + (0.5 * (1 - q)) + ')'; c.lineWidth = 3 * (1 - q) + 1; c.beginPath(); c.arc(0, 0, 20 + q * 70, 0, 7); c.stroke(); }
+      if (T >= 4) { c.strokeStyle = 'rgba(253,186,116,.8)'; c.lineWidth = 2; for (let k = 0; k < 8; k++) { const a = k * 0.785 + 0.3; c.beginPath(); c.moveTo(Math.cos(a) * 14, Math.sin(a) * 14); c.lineTo(Math.cos(a) * 36 + Math.sin(k * 3) * 5, Math.sin(a) * 36); c.lineTo(Math.cos(a + 0.12) * 66, Math.sin(a + 0.12) * 66); c.stroke(); } }
+      c.restore();
+    }, (c, tm, T) => {                                      // a glowing anvil from tier 2, and sparks thrown off the hammer
+      if (T >= 2) {
+        c.globalCompositeOperation = 'source-over'; pPoly(c, [[134, 207], [170, 207], [164, 197], [140, 197]], '#1f2937', '#030712', 1.2); pPoly(c, [[128, 185], [176, 185], [172, 195], [132, 195]], pLG(c, 0, 185, 0, 195, ['#9ca3af', '#4b5563']), '#030712', 1.2); pPoly(c, [[176, 187], [192, 191], [176, 194]], '#6b7280', '#030712', 1);
+        c.fillStyle = '#fb923c'; c.fillRect(134, 184, 36, 2); pGlow(c, 152, 184, 18, '#f97316', 0.5);
+      }
+      c.globalCompositeOperation = 'lighter'; const n = 6 + T * 2;
+      for (let i = 0; i < n; i++) { const ph = (tm * 1.4 + i / n) % 1, a = -2.6 + (i * 0.83) % 2.4, x = 178 + Math.cos(a) * ph * 46, y = 78 + Math.sin(a) * ph * 40 + ph * ph * 34; c.fillStyle = i & 1 ? 'rgba(254,215,170,' + (1 - ph) + ')' : 'rgba(249,115,22,' + (1 - ph) + ')'; c.fillRect(x, y, 2.6 * (1 - ph) + 0.8, 2.6 * (1 - ph) + 0.8); }
+    });
+  }
+
   NA.kingMidas = (c, def, tm) => {
     const T = ART_TIER, G = ['#fff3b0', '#fcd34d', '#e0a812', '#a16207', '#4a2f05'];
     if (T >= 4) { c.save(); c.translate(100, 110); c.rotate(tm * 0.15); for (let i = 0; i < 16; i++) { const a = i * 0.3927; pPoly(c, [[0, 0], [Math.cos(a - 0.07) * 150, Math.sin(a - 0.07) * 150], [Math.cos(a + 0.07) * 150, Math.sin(a + 0.07) * 150]], 'rgba(253,224,71,0.14)'); } c.restore(); }
@@ -4364,6 +4683,15 @@
       else pStruct(c, r, def, tm);
     });
     ctx.restore();
+    if (sprite) {                                  // finishing pass: volume + rim light, painted only onto the character's own pixels
+      ctx.save(); ctx.globalCompositeOperation = 'source-atop';
+      let fg = ctx.createLinearGradient(0, 0, 0, 240); fg.addColorStop(0, 'rgba(255,240,210,.17)'); fg.addColorStop(0.45, 'rgba(255,255,255,0)'); fg.addColorStop(1, 'rgba(8,10,30,.34)'); ctx.fillStyle = fg; ctx.fillRect(0, 0, 200, 240);
+      fg = ctx.createLinearGradient(0, 0, 200, 0); fg.addColorStop(0, 'rgba(255,230,190,.15)'); fg.addColorStop(0.35, 'rgba(255,255,255,0)'); fg.addColorStop(1, 'rgba(10,12,40,.24)'); ctx.fillStyle = fg; ctx.fillRect(0, 0, 200, 240);
+      ctx.restore();
+    } else {                                       // portrait: cinematic vignette and a soft key light
+      const vg2 = ctx.createRadialGradient(100, 108, 50, 100, 108, 150); vg2.addColorStop(0, 'rgba(5,6,18,0)'); vg2.addColorStop(1, 'rgba(5,6,18,.5)'); ctx.fillStyle = vg2; ctx.fillRect(0, 0, 200, 240);
+      ctx.save(); ctx.globalCompositeOperation = 'lighter'; const kl = ctx.createRadialGradient(56, 36, 0, 56, 36, 130); kl.addColorStop(0, 'rgba(255,230,180,.16)'); kl.addColorStop(1, 'rgba(255,230,180,0)'); ctx.fillStyle = kl; ctx.fillRect(0, 0, 200, 240); ctx.restore();
+    }
     if (r.k === 'h') {
       pSparks(ctx, def, r, tm);
       if (r.fx === 'lightning') { const sd = Math.floor(tm * 6); pBolt(ctx, 30 + (sd % 3) * 20, 4, 150, 112, sd, '#e0f2fe', 2.2); pBolt(ctx, 170 - (sd % 4) * 12, 6, 54, 130, sd + 3, '#fde047', 1.6); }
@@ -5385,6 +5713,7 @@
   // ---------------------------------------------------------------- KING MIDAS ----
   A.kingMidas = (t, def, target, inR, dmg) => { sfx.play('goldBolt'); fxProj(t, def, target, dmg, { splash: t.splash || 36, color: '#facc15', style: 'gold' }); };
   NEWFX2.onKill = (en, src, earned) => {                   // Midas Curse: bonus gold on enemies Midas defeats
+    chuckBounty(en, earned);
     if (!src || src.typeId !== 'kingMidas' || !game.towers.includes(src)) return;
     const chance = 0.28 + 0.06 * src.tier;
     if (en.isBoss || simRand() < chance) {
@@ -5431,6 +5760,85 @@
   };
   NEWFX2.mod.simoHayha = (t, def, inR, blizzard) => ({ rate: blizzard ? 1 / 0.9 : 1 });   // winter-clad: ignores the Blizzard fire-rate penalty
 
+  // ---------------------------------------------------------------- THE CREATOR ----
+  function conjureConstruct(t, x, y, life) {
+    if (game.alliedUnits.filter(u => u.kind === 'construct' && u.owner === t && !u.dead).length >= 10) return false;   // hard cap keeps the sim light
+    const hp = 220 + 70 * t.tier;
+    game.alliedUnits.push({ kind: 'construct', x, y, hp, maxHp: hp, damage: 10 + t.damage * 0.3, life, atkCd: 1.0, angle: 0, color: '#67e8f9', owner: t, shots: 0, spin: 0 });
+    vGlyph(x, y + 4, 30, '#67e8f9', 0.7, 6); vRing(x, y, 34, '#fef9c3', 2.5, 0.4); vSparks(x, y, '#a5f3fc', 8, 150); vPillar(x, y, '#a5f3fc', 12, 0.35);
+    return true;
+  }
+  A.lachlan = (t, def, target, inR, dmg) => {
+    t.hits = (t.hits || 0) + 1; const big = t.hits % 4 === 0;
+    sfx.play(big ? 'creatorSpark' : 'creatorBolt');
+    fxProj(t, def, target, big ? dmg * 1.9 : dmg, { splash: (t.splash || 30) * (big ? 2.2 : 1), color: big ? '#fef9c3' : '#67e8f9' });
+    if (big) { fxText(t.x, t.y - 30, 'DIVINE SPARK', '#fef9c3'); vRing(t.x, t.y, 36, '#fef9c3', 3, 0.35); }
+  };
+  S.lachlan = (t) => {                                         // Conjure Construct
+    t.specialTimer = Math.max(5.5, 9.5 - 0.6 * t.tier);
+    const cap = 2 + Math.floor(t.tier / 2);
+    if (game.alliedUnits.filter(u => u.kind === 'construct' && u.owner === t && !u.dead).length >= cap) return true;
+    const spot = findNearestPathPoint(game.map, t.x, t.y, 260);
+    const x = spot ? t.x + (spot.x - t.x) * 0.55 + (simRand() - 0.5) * 40 : t.x + (simRand() - 0.5) * 56;
+    const y = spot ? t.y + (spot.y - t.y) * 0.55 + (simRand() - 0.5) * 40 : t.y + (simRand() - 0.5) * 56;
+    sfx.play('conjure'); t.attackAnim = 1; fxText(x, y - 24, 'CONSTRUCT!', '#a5f3fc');
+    conjureConstruct(t, x, y, 13 + t.tier);
+    return true;
+  };
+  NEWFX2.zoneUpd.genesis = (z, dt) => {                        // Let There Be Light
+    const t = z.owner;
+    if (!z.init) {
+      z.init = true; const n = 3 + Math.floor(t.tier / 2);
+      for (let i = 0; i < n; i++) { const a = i / n * 6.283 + 0.5; conjureConstruct(t, z.x + Math.cos(a) * z.r * 0.45, z.y + Math.sin(a) * z.r * 0.32, 9 + t.tier); }
+    }
+    for (const en of game.enemies) {
+      if (en.dead || Math.hypot(en.x - z.x, en.y - z.y) > z.r) continue;
+      en.slowFactor = Math.max(en.slowFactor, en.isBoss ? 0.3 : 0.5); en.slowTimer = Math.max(en.slowTimer, 0.4);
+    }
+    z.tick -= dt;
+    if (z.tick <= 0) {
+      z.tick = 0.6;
+      _en(z.x, z.y, z.r).forEach(en => { damageEnemy(en, t.damage * (0.6 + 0.1 * t.tier), true, t); vSparks(en.x, en.y, '#fef9c3', 4, 120); });
+      vRing(z.x, z.y, z.r, '#fef9c3', 2.5, 0.6, z.r * 0.2);
+    }
+  };
+
+  // ---------------------------------------------------------------- CHUCK & OZAN ----
+  function payOwner(t, amt) {        // gold goes to the purse of the player who owns this troop (shared rewards would pay everyone in a co-op match)
+    if (game.pg && t.owner !== undefined) { const p = game.curP; game.curP = t.owner; try { game.gold += amt; } finally { game.curP = p; } } else game.gold += amt;
+  }
+  A.chuck = (t, def, target, inR, dmg) => { sfx.play('goldBolt'); fxProj(t, def, target, dmg, { splash: t.splash || 24, color: '#fbbf24', style: 'gold' }); };
+  NEWFX2.tick.chuck = (t, def, dt) => {                        // Payday
+    if (t.hourT > 0) t.hourT = Math.max(0, t.hourT - dt);
+    if (!game.waveActive) return;
+    t.payCd = (t.payCd === undefined ? 4 : t.payCd) - dt;
+    if (t.payCd > 0) return;
+    t.payCd = Math.max(3.5, 6.5 - 0.6 * t.tier);
+    const rank = game.towers.filter(q => q.typeId === 'chuck' && q.owner === t.owner).indexOf(t);   // extra Chucks pay half, so stacking is not a free snowball
+    const amt = Math.round((5 + 3 * t.tier) * (rank > 0 ? 0.5 : 1) * (t.hourT > 0 ? 2 : 1));
+    payOwner(t, amt); t.paid = (t.paid || 0) + amt; t.attackAnim = 0.6;
+    sfx.play('coin'); fxText(t.x, t.y - 36, '+' + amt + 'g PAYDAY', '#fde047'); vSparks(t.x, t.y - 16, '#fde047', 8, 150); vRing(t.x, t.y, 34, '#fbbf24', 2.5, 0.4);
+  };
+  function chuckBounty(en, earned) {                           // Tip Jar
+    const best = new Map();                                  // one Tip Jar bounty per enemy per player: the best Chuck in range
+    for (const t of game.towers) {
+      if (t.typeId !== 'chuck' || Math.hypot(en.x - t.x, en.y - t.y) > t.range) continue;
+      const bonus = Math.max(1, Math.round(earned * (0.16 + 0.03 * t.tier) * (t.hourT > 0 ? 2 : 1))), cur = best.get(t.owner);
+      if (!cur || bonus > cur.bonus) best.set(t.owner, { t, bonus });
+    }
+    best.forEach(({ t, bonus }) => {
+      payOwner(t, bonus); t.paid = (t.paid || 0) + bonus; vSparks(en.x, en.y, '#fde047', 4, 110);
+      if (bonus >= 3) fxText(en.x + 10, en.y - 28, '+' + bonus + 'g TIP', '#fef08a');
+    });
+  }
+  A.ozan = (t, def, target, inR, dmg) => { sfx.play('cannon'); fxProj(t, def, target, dmg, { splash: t.splash || 36, color: '#fb923c' }); };
+  S.ozan = (t) => {                                            // Forge Golem
+    t.specialTimer = Math.max(6.5, 10 - 0.8 * t.tier);
+    summonAllies(t, 'golem', t.tier >= 3 ? 2 : 1, 380 + t.tier * 170, 30 + t.tier * 12, 15, '#fb923c', 3 + t.tier, 'Clay Golem!');
+    sfx.play('forge'); t.attackAnim = 1;
+    return true;
+  };
+
   // ---------------------------------------------------------------- ULTIMATES ----
   function clampToTower(t, x, y, mult) { const m = t.range * mult, d = Math.hypot(x - t.x, y - t.y); return d <= m ? { x, y } : { x: t.x + (x - t.x) / d * m, y: t.y + (y - t.y) / d * m }; }
   function ultRadius(t) { return t.typeId === 'bobbyFischer' ? 150 + 12 * t.tier : 160 + 12 * t.tier; }
@@ -5452,6 +5860,18 @@
     } else if (def.type === 'venom') {
       game.zones.push({ type: 'outbreak', x: t.x, y: t.y, r: 0, R: 185 + 15 * t.tier, life: 3, max: 3, owner: t, hit: new Set(), inf: 0, maxInf: 4 + 2 * t.tier });
       sfx.play('outbreak'); fxText(t.x, t.y - 44, 'SYMBIOTE OUTBREAK!', '#c4b5fd'); vScreen('#4c1d95', 0.3, 0.5); vShake(6);
+    } else if (def.type === 'chuck') {
+      t.hourT = 10 + t.tier; payOwner(t, 40 + 30 * t.tier);
+      sfx.play('goldUlt'); fxText(t.x, t.y - 46, 'GOLDEN HOUR!', '#fde047'); vScreen('#fde047', 0.2, 0.4); vShake(2);
+      [0.4, 0.7, 1].forEach(m => vRing(t.x, t.y, 120 * m, '#fbbf24', 4, 0.5 + m * 0.4)); vSparks(t.x, t.y - 10, '#fde047', 26, 260);
+    } else if (def.type === 'ozan') {
+      sfx.play('mass'); fxText(t.x, t.y - 46, 'MASS FORGING!', '#fed7aa'); vScreen('#fb923c', 0.22, 0.4); vShake(5);
+      fxAoe(t, t.x, t.y, 120 + 12 * t.tier, t.damage * 1.5, false, '#fb923c', en => { en.stunTimer = Math.max(en.stunTimer || 0, en.isBoss ? 0.6 : 1.4); });
+      for (let k = 0; k < 2; k++) summonAllies(t, 'golem', 1 + Math.floor(t.tier / 2), 340 + t.tier * 170, 28 + t.tier * 12, 14, '#fb923c', 14, k ? '' : 'Clay Golems!');
+    } else if (def.type === 'lachlan') {
+      const p = clampToTower(t, aim.x, aim.y, 1.5); game.zones.push({ type: 'genesis', x: p.x, y: p.y, r: ultRadius(t), life: 7 + t.tier, max: 7 + t.tier, owner: t, tick: 0.6 });
+      sfx.play('genesisUlt'); fxText(p.x, p.y - 40, 'LET THERE BE LIGHT!', '#fef9c3'); vScreen('#fef9c3', 0.25, 0.4); vShake(4);
+      [0.3, 0.6, 1].forEach(m => vRing(p.x, p.y, ultRadius(t) * m, '#a5f3fc', 4, 0.6 + m * 0.3)); vGlyph(p.x, p.y, 70, '#fef9c3', 1.2, 8);
     } else if (def.type === 'simoHayha') {
       game.zones.push({ type: 'shot', target: aim.enemy, life: 0.9, max: 0.9, owner: t });
       sfx.play('scope'); fxText(t.x, t.y - 44, 'LINING UP\u2026', '#bae6fd');
@@ -5532,7 +5952,7 @@
     });
     if (game.ultArm && (!towerAlive(game.ultArm.tower) || game.selectedBuildType)) game.ultArm = null;
     for (let i = game.zones.length - 1; i >= 0; i--) {
-      const z = game.zones[i]; if (z.type !== 'shot' && z.type !== 'trap' && z.type !== 'board' && z.type !== 'kingdom' && z.type !== 'outbreak') continue;
+      const z = game.zones[i]; if (z.type !== 'shot' && z.type !== 'trap' && z.type !== 'board' && z.type !== 'kingdom' && z.type !== 'outbreak' && z.type !== 'genesis') continue;
       z.age = (z.age || 0) + dt;
       if (NEWFX2.zoneUpd[z.type]) NEWFX2.zoneUpd[z.type](z, dt);
       if (z.type !== 'shot') z.life -= dt; else z.life -= dt;
@@ -5581,6 +6001,19 @@
     for (let i = 0; i < 24; i++) { const ph = (time * 0.55 + i * 0.137) % 1, fx = ((i * 0.618) % 1), x = Math.cos(i * 2.4) * R * (0.15 + 0.8 * fx), y = -R * 0.8 + ph * R * 1.5, w = 4.5 * Math.abs(Math.cos(time * 6 + i)) + 1; c.fillStyle = '#fde047'; c.beginPath(); c.ellipse(x, y, w, 4.5, 0, 0, 7); c.fill(); }
     c.restore();
   }
+  function drawGenesis(c, z, time) {
+    const fade = Math.max(0, Math.min(1, (z.age || 0) / 0.4, z.life / 0.9)), R = z.r;
+    c.save(); c.translate(z.x, z.y); c.globalAlpha = fade * 0.92;
+    const g = c.createRadialGradient(0, 0, 0, 0, 0, R); g.addColorStop(0, 'rgba(254,249,195,0.5)'); g.addColorStop(0.65, 'rgba(103,232,249,0.22)'); g.addColorStop(1, 'rgba(14,116,144,0.05)'); c.fillStyle = g; c.beginPath(); c.arc(0, 0, R, 0, 7); c.fill();
+    c.save(); c.rotate(time * 0.3); c.strokeStyle = '#a5f3fc'; c.lineWidth = 2.5; c.beginPath(); c.arc(0, 0, R, 0, 7); c.stroke(); c.lineWidth = 1.4; c.beginPath(); c.arc(0, 0, R * 0.7, 0, 7); c.stroke();
+    c.strokeStyle = 'rgba(254,249,195,0.85)';
+    for (let k = 0; k < 2; k++) { c.beginPath(); for (let i = 0; i <= 3; i++) { const a = i * 2.0944 + k * 3.1416; c.lineTo(Math.cos(a) * R * 0.7, Math.sin(a) * R * 0.7); } c.stroke(); }
+    for (let i = 0; i < 12; i++) { const a = i * 0.5236; c.beginPath(); c.moveTo(Math.cos(a) * R * 0.7, Math.sin(a) * R * 0.7); c.lineTo(Math.cos(a) * R, Math.sin(a) * R); c.stroke(); }
+    c.restore();
+    c.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < 22; i++) { const ph = (time * 0.5 + i * 0.173) % 1, fx = (i * 0.618) % 1, x = Math.cos(i * 2.4) * R * (0.1 + 0.8 * fx), y = R * 0.5 - ph * R * 1.2, w = 3.5 * Math.abs(Math.cos(time * 5 + i)) + 1; c.fillStyle = i & 1 ? '#fef9c3' : '#a5f3fc'; c.fillRect(x - w / 2, y - w / 2, w, w); }
+    c.restore();
+  }
   function drawTrap(c, z, time) {
     const a = Math.min(1, z.life * 1.2), armed = z.armT <= 0, r = z.r; c.save(); c.translate(z.x, z.y); c.globalAlpha = a;
     pGlow(c, 0, 0, r * 1.7, armed ? '#f8fafc' : '#fbbf24', 0.3 + 0.1 * Math.sin(time * 5));
@@ -5612,9 +6045,14 @@
         }
         if (t.evoStacks) pGlow(c, 0, -18, 40 + t.evoStacks * 6, '#7c3aed', 0.25 + 0.05 * t.evoStacks);
         c.restore();
+      } else if (def.type === 'chuck' && t.hourT > 0) {                    // Golden Hour aura
+        c.save(); c.translate(t.x, t.y + 6); c.scale(1, 0.4); c.globalAlpha = Math.min(1, t.hourT / 1.5);
+        c.strokeStyle = '#fde047'; c.lineWidth = 4; c.beginPath(); c.arc(0, 0, 46 + Math.sin(time * 4) * 3, 0, 7); c.stroke();
+        c.strokeStyle = 'rgba(251,191,36,0.6)'; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, 66, 0, 7); c.stroke(); c.restore();
+        pGlow(c, t.x, t.y - 10, 60, '#fbbf24', 0.25);
       }
     });
-    game.zones.forEach(z => { if (z.type === 'trap') drawTrap(c, z, time); else if (z.type === 'board') drawBoard(c, z, time); else if (z.type === 'kingdom') drawKingdom(c, z, time); else if (z.type === 'outbreak') drawOutbreak(c, z, time); });
+    game.zones.forEach(z => { if (z.type === 'trap') drawTrap(c, z, time); else if (z.type === 'board') drawBoard(c, z, time); else if (z.type === 'kingdom') drawKingdom(c, z, time); else if (z.type === 'outbreak') drawOutbreak(c, z, time); else if (z.type === 'genesis') drawGenesis(c, z, time); });
   };
   NEWFX2.drawTop = (c, time) => {
     c.save(); c.lineCap = 'round';
@@ -6017,6 +6455,17 @@
               splash: 0, slowFactor: 0, slowDuration: 0, armorPierce: true,
               color: u.color, sourceTower: u.owner
             });
+          }
+        }
+      } else if (u.kind === 'construct') {
+        u.atkCd -= dt; u.spin = (u.spin || 0) + dt;
+        if (u.atkCd <= 0) {
+          let en = null, bd = 185;
+          for (const e of game.enemies) { if (e.dead) continue; const d = Math.hypot(e.x - u.x, e.y - u.y); if (d < bd) { bd = d; en = e; } }
+          if (en) {
+            u.atkCd = 1.0; u.shots = (u.shots || 0) + 1; u.angle = Math.atan2(en.y - u.y, en.x - u.x);
+            const chill = u.shots % 3 === 0;
+            game.projectiles.push({ x: u.x, y: u.y, target: en, speed: 760, damage: u.damage, splash: 0, slowFactor: chill ? 0.3 : 0, slowDuration: chill ? 1.2 : 0, armorPierce: false, color: '#67e8f9', sourceTower: u.owner });
           }
         }
       }
@@ -6473,6 +6922,12 @@
     c.save(); c.translate(en.x, en.y);
     if (boss) { const pu = 0.35 + 0.15 * Math.sin(time * 4), g = c.createRadialGradient(0, 0, r * 0.4, 0, 0, r * 2.3); g.addColorStop(0, en.color); g.addColorStop(1, 'rgba(0,0,0,0)'); c.save(); c.globalCompositeOperation = 'lighter'; c.globalAlpha = pu; c.fillStyle = g; c.beginPath(); c.arc(0, 0, r * 2.3, 0, 7); c.fill(); c.restore(); }
     c.fillStyle = 'rgba(0,0,0,.34)'; c.beginPath(); c.ellipse(0, r * 0.9 + (fly ? 12 : 0), r * (quad ? 1.35 : 0.95), r * 0.34, 0, 0, 7); c.fill();
+    if (!fly && !ghost && !(en.stunTimer > 0) && !(en.petrifyTimer > 0)) {          // footstep dust trailing behind walkers
+      for (let i = 0; i < 3; i++) {
+        const q = (time * 1.6 * (en.speed / 40) + i / 3 + ph) % 1, rr = r * (0.18 + q * 0.3);
+        c.fillStyle = 'rgba(190,175,150,' + (0.22 * (1 - q)).toFixed(3) + ')'; c.beginPath(); c.ellipse(-f * (r * 0.5 + q * r * 1.6), r * 0.9 - q * r * 0.35, rr * 1.3, rr * 0.7, 0, 0, 7); c.fill();
+      }
+    }
     c.save(); c.scale(f * s, s);
     c.translate(0, fly ? Math.sin(time * 4 + ph) * 3 - 6 : -Math.abs(Math.sin(t)) * 2);
     c.lineJoin = 'round'; c.lineWidth = 1.2; c.strokeStyle = 'rgba(0,0,0,.6)';
@@ -6530,11 +6985,34 @@
     game.alliedUnits.forEach(u => {
       c.save(); c.translate(u.x, u.y);
       c.fillStyle = 'rgba(0,0,0,.3)'; c.beginPath(); c.ellipse(0, 8, 9, 3.5, 0, 0, 7); c.fill();
-      if (u.kind === 'turret') {
+      if (u.kind === 'construct') {
+        const sp = u.spin || 0, bob = Math.sin(sp * 3 + u.x) * 1.6; c.globalAlpha = Math.min(1, (u.life || 1) / 1.2);
+        pGlow(c, 0, -8, 24, '#67e8f9', 0.45);
+        pPoly(c, [[-9, 6], [0, 10], [9, 6], [0, 2]], '#1e3a5f', '#67e8f9', 1);
+        c.translate(0, -10 + bob);
+        pPoly(c, [[0, -13], [8, -2], [0, 11], [-8, -2]], pLG(c, 0, -13, 0, 11, ['#ecfeff', '#67e8f9', '#0e7490']), '#083344', 1.2);
+        pPoly(c, [[0, -13], [3, -2], [0, 11]], 'rgba(255,255,255,0.35)');
+        c.strokeStyle = '#fef9c3'; c.lineWidth = 1.2; c.save(); c.scale(1, 0.38); c.rotate(sp * 2); c.beginPath(); c.arc(0, 0, 13, 0, 5.2); c.stroke(); c.restore();
+        c.save(); c.rotate(u.angle || 0); c.fillStyle = '#a5f3fc'; c.fillRect(6, -1.5, 9, 3); c.restore();
+        const fr = Math.max(0, Math.min(1, u.hp / (u.maxHp || u.hp || 1))); c.fillStyle = 'rgba(0,0,0,.5)'; c.fillRect(-9, 16, 18, 2.5); c.fillStyle = '#67e8f9'; c.fillRect(-9, 16, 18 * fr, 2.5);
+      } else if (u.kind === 'turret') {
         const g = c.createRadialGradient(-2, -3, 1, 0, 0, 11); g.addColorStop(0, '#e2e8f0'); g.addColorStop(1, u.color || '#64748b');
         c.fillStyle = g; c.strokeStyle = '#0f172a'; c.lineWidth = 1.5; c.beginPath(); c.arc(0, 0, 10, 0, 7); c.fill(); c.stroke();
         c.fillStyle = '#334155'; c.fillRect(2, -2.5, 13, 5); c.fillStyle = '#fbbf24'; c.beginPath(); c.arc(0, 0, 3, 0, 7); c.fill();
       } else {
+        if (u.subtype === 'golem') {
+          const st = Math.abs(Math.sin(time * 5 + u.x * 0.1)) * 1.5;
+          pGlow(c, 0, -2, 20, '#f97316', 0.3 + 0.1 * Math.sin(time * 6));
+          c.fillStyle = '#7c2d12'; c.strokeStyle = '#1c0a03'; c.lineWidth = 1.4;
+          c.beginPath(); c.roundRect(-7, 2 - st, 5, 8, 2); c.roundRect(2, 2 + st, 5, 8, 2); c.fill(); c.stroke();
+          const gg = c.createLinearGradient(0, -12, 0, 6); gg.addColorStop(0, '#fdba74'); gg.addColorStop(1, '#9a3412');
+          c.fillStyle = gg; c.beginPath(); c.roundRect(-9, -11, 18, 15, 5); c.fill(); c.stroke();
+          c.beginPath(); c.roundRect(-5, -19, 10, 9, 3); c.fill(); c.stroke();
+          c.beginPath(); c.roundRect(-13, -9, 5, 12, 2); c.roundRect(8, -9, 5, 12, 2); c.fill(); c.stroke();
+          c.fillStyle = '#fde047'; c.fillRect(-3, -16, 2, 2.5); c.fillRect(1, -16, 2, 2.5);
+          c.strokeStyle = 'rgba(251,146,60,0.9)'; c.lineWidth = 1; c.beginPath(); c.moveTo(-4, -7); c.lineTo(0, -3); c.lineTo(4, -8); c.stroke();
+          c.restore(); return;
+        }
         c.translate(0, -Math.abs(Math.sin(time * 9 + u.x * 0.1)) * 2);
         const g = c.createLinearGradient(0, -10, 0, 9); g.addColorStop(0, '#f8fafc'); g.addColorStop(1, u.color || '#cbd5e1');
         c.fillStyle = g; c.strokeStyle = 'rgba(0,0,0,.6)'; c.lineWidth = 1.2; c.beginPath(); c.ellipse(0, 1, 5.5, 7.5, 0, 0, 7); c.fill(); c.stroke();
@@ -6677,6 +7155,11 @@
 
     CINEMA.world(ctx);
     drawAmbient(ctx, game.map, game.time);
+    {                                              // colour grade: warm highlights, cool shadows, tuned per realm
+      const GR = { kingdom: ['255,225,160', '60,70,140'], frozen: ['200,230,255', '60,90,170'], jurassic: ['255,230,140', '20,90,60'], olympus: ['255,240,200', '90,100,190'], cyberpunk: ['255,90,200', '30,200,255'] }[game.map.id] || ['255,230,180', '50,60,130'];
+      ctx.save(); ctx.globalCompositeOperation = 'soft-light'; const gg = ctx.createLinearGradient(0, 0, WORLD_W, WORLD_H);
+      gg.addColorStop(0, 'rgba(' + GR[0] + ',.32)'); gg.addColorStop(0.5, 'rgba(' + GR[0] + ',0)'); gg.addColorStop(1, 'rgba(' + GR[1] + ',.34)'); ctx.fillStyle = gg; ctx.fillRect(0, 0, WORLD_W, WORLD_H); ctx.restore();
+    }
     NEWFX3.draw(ctx);
     ctx.restore();
     CINEMA.post(ctx, canvas, game);
@@ -7498,8 +7981,8 @@
   // 10B. CHARACTER COLLECTION, PURCHASE FLOW & COIN UI
   // ==========================================================================
   const collectionEl = document.getElementById('collectionScreen');
-  const CAT_LABEL = { Medieval: 'Medieval Fantasy', Ancient: 'Ancient Civilisations', Prehistoric: 'Prehistoric', Mythological: 'Mythological', Magic: 'Magic', Modern: 'Modern', Futuristic: 'Futuristic' };
-  const COL_CATS = ['All', 'Medieval', 'Ancient', 'Prehistoric', 'Mythological', 'Magic', 'Modern', 'Futuristic'];
+  const CAT_LABEL = { Medieval: 'Medieval Fantasy', Ancient: 'Ancient Civilisations', Prehistoric: 'Prehistoric', Mythological: 'Mythological', Magic: 'Magic', Modern: 'Modern', Futuristic: 'Futuristic', Creator: 'Creator' };
+  const COL_CATS = ['All', 'Medieval', 'Ancient', 'Prehistoric', 'Mythological', 'Magic', 'Modern', 'Futuristic', 'Creator'];
   const COL_RARS = ['All', 'Common', 'Rare', 'Epic', 'Legendary', 'Mythical'];
   const COL_STATUS = ['All', 'Unlocked', 'Locked'];
   const colFilters = { cat: 'All', rar: 'All', status: 'All' };
@@ -7688,10 +8171,10 @@
 
   // ---- packs ----
   const PACKS = [
-    { id: 'bronze', name: 'Recruit Pack', cost: 300, cards: 1, guarantee: null, odds: { Common: 66, Rare: 27.5, Epic: 5.4, Legendary: 1, Mythical: 0.1 }, pc: '#b45309', pc2: '#fcd34d', blurb: '1 card' },
-    { id: 'silver', name: 'Veteran Pack', cost: 900, cards: 2, guarantee: 'Rare', odds: { Common: 33, Rare: 47, Epic: 16, Legendary: 3.4, Mythical: 0.6 }, pc: '#475569', pc2: '#e2e8f0', blurb: '2 cards \u2022 1 Rare or better' },
-    { id: 'gold', name: 'Champion Pack', cost: 2000, cards: 3, guarantee: 'Epic', odds: { Common: 0, Rare: 45, Epic: 38, Legendary: 14.5, Mythical: 2.5 }, pc: '#b45309', pc2: '#fde047', blurb: '3 cards \u2022 1 Epic or better' },
-    { id: 'mythic', name: 'Mythic Pack', cost: 4200, cards: 3, guarantee: 'Legendary', odds: { Common: 0, Rare: 0, Epic: 42, Legendary: 44, Mythical: 14 }, pc: '#9f1239', pc2: '#fb7185', blurb: '3 cards \u2022 1 Legendary or better' }
+    { id: 'bronze', name: 'Recruit Pack', cost: 300, cards: 1, guarantee: null, odds: { Common: 67, Rare: 29.7, Epic: 3, Legendary: 0.25, Mythical: 0.05 }, pc: '#b45309', pc2: '#fcd34d', blurb: '1 card' },
+    { id: 'silver', name: 'Veteran Pack', cost: 900, cards: 2, guarantee: 'Rare', odds: { Common: 36, Rare: 51, Epic: 12, Legendary: 0.85, Mythical: 0.15 }, pc: '#475569', pc2: '#e2e8f0', blurb: '2 cards \u2022 1 Rare or better' },
+    { id: 'gold', name: 'Champion Pack', cost: 2000, cards: 3, guarantee: 'Epic', odds: { Common: 0, Rare: 55, Epic: 42, Legendary: 2.7, Mythical: 0.3 }, pc: '#b45309', pc2: '#fde047', blurb: '3 cards \u2022 1 Epic or better' },
+    { id: 'mythic', name: 'Mythic Pack', cost: 4200, cards: 3, guarantee: 'Legendary', odds: { Common: 0, Rare: 0, Epic: 85, Legendary: 14, Mythical: 1 }, pc: '#9f1239', pc2: '#fb7185', blurb: '3 cards \u2022 1 Legendary or better' }
   ];
   const RANK = { Common: 0, Rare: 1, Epic: 2, Legendary: 3, Mythical: 4 };
   const PACK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M4 20h16M6 20V9l3-2 3 2 3-2 3 2v11M9 13h6M12 4v3"/></svg>';
@@ -7728,7 +8211,7 @@
       const free = packsOwned(p.id), card = document.createElement('div'); card.className = 'pk-card'; card.style.setProperty('--pc', p.pc); card.style.setProperty('--pc2', p.pc2); card.style.animationDelay = i * 0.07 + 's';
       card.innerHTML = `<div class="pk-art">${PACK_ICON}<b>${p.name.split(' ')[0].toUpperCase()}</b></div>
         <div class="pk-name">${p.name}</div><div class="pk-meta">${p.blurb}</div>
-        <div class="pk-odds">${packOdds(p).map(([r, w]) => `<div class="pk-odd"><span style="color:${RARITY_COLORS[r]}">${r}</span><i><s style="width:${Math.min(100, w)}%; background:${RARITY_COLORS[r]}"></s></i><em>${w < 1 ? w.toFixed(1) : Math.round(w)}%</em></div>`).join('')}</div>
+        <div class="pk-odds">${packOdds(p).map(([r, w]) => `<div class="pk-odd"><span style="color:${RARITY_COLORS[r]}">${r}</span><i><s style="width:${Math.min(100, w)}%; background:${RARITY_COLORS[r]}"></s></i><em>${w < 1 ? w.toFixed(2) : Math.round(w)}%</em></div>`).join('')}</div>
         <div class="pk-btns">${free ? `<button class="btn btn-gold" data-free="1">Open free pack (x${free})</button>` : ''}<button class="btn btn-pack" ${PlayerData.coins() < p.cost || !left ? 'disabled' : ''} data-buy="1"><span class="coin-icon"></span>${p.cost.toLocaleString()} \u2014 Open</button></div>`;
       card.querySelector('[data-buy]').addEventListener('click', () => beginPack(p, false));
       const fb = card.querySelector('[data-free]'); if (fb) fb.addEventListener('click', () => beginPack(p, true));
