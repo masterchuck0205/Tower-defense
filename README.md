@@ -111,3 +111,55 @@ Troops were compared on damage per second per 100 gold within each rarity (suppo
 * **Creators:** Lachlan's Constructs were doing roughly 95 dps each; now one shot per second at lower damage, fewer of them, and a weaker Blueprint Realm. Chuck's Payday and Tip Jar are softer, extra Chucks pay half Payday and only the best Tip Jar applies per enemy, so stacking him is not a free snowball. Ozan +8 dmg, Chuck +6 dmg.
 
 **Creator buffs (slight):** Chuck 38 dmg, Payday base +1, Tip Jar +1%; Lachlan 72 dmg and stronger Constructs; Ozan 72 dmg and tougher, harder-hitting Golems. All three also got new signature portrait effects (sunburst and coin fountain, blueprint mandala and light shafts, forge glow, anvil and hammer sparks).
+
+## Champion rarity
+
+A new top rarity above Mythical (teal/gold badge and glow). **Chuck, Lachlan and Ozan** are Champions. Their stats and unlock prices are unchanged. Champion has no pack odds, so Champions can't drop from packs and are direct-unlock only; add a `Champion` entry to a pack's `odds` in `index.html` to change that. Champion has its own colour, badge, collection filter pill and pack-reveal pull title, and it uses the Mythical-style celebration if one is ever pulled.
+
+## Seven new troops
+
+| Troop | Class | Rarity | Signature |
+|---|---|---|---|
+| Ember Alchemist | Magic | Rare | Flasks leave burning pools; every 3rd is acid (armour shred). Ult: Philosopher's Fire. |
+| Harbour Harpooner | Medieval | Rare | Harpoon pierces a whole line; every 3rd tethers (stun + slow). Ult: Harpoon Volley. |
+| Obsidian Guardian | Ancient | Epic | Fissure cracks stack and strip armour, 5 cracks Shatter. Tremor stun. Ult: Earthquake. |
+| Minefield Sapper | Modern | Epic | Grenades plus buried proximity mines. Ult: Carpet Bombing. |
+| Chronomancer | Magic | Legendary | Every bolt echoes a second hit; Stasis Fields freeze a crowd. Ult: Time Stop. |
+| Prism Warden | Futuristic | Legendary | Rapid beam ramps on one target and refracts at full focus. Ult: Orbital Lance. |
+| Fenrir | Mythological | Mythical | Claws, a wolf pack, faster per living wolf. Ult: Ragnarok Howl. |
+
+Each has its own portrait art for all four evolution tiers, its own attack, special and ultimate, and runs inside the deterministic simulation (`test/newtroops.test.js`). They are in the normal rarity pools, so they can drop from packs and be bought in the collection.
+
+## Eight more troops
+
+| Troop | Class | Rarity | Signature |
+|---|---|---|---|
+| Storm Falconer | Medieval | Rare | Every 4th shot is a falcon Stoop that marks the target so everyone hits it harder. Ult: Falcon Flock. |
+| Totem Shaman | Prehistoric | Rare | Plants spirit totems that slow and burn the path. Ult: Spirit Stampede. |
+| Nanite Architect | Futuristic | Rare | Tags every target with nanites (extra damage taken) and replicates to neighbours. Ult: Grey Goo. |
+| Sand Sorceress | Ancient | Epic | Every 4th bolt is a Sandspout that stuns and leaves quicksand. Ult: Sandstorm. |
+| Gunship Commander | Modern | Epic | Strafing runs rake a whole line of enemies. Ult: Gunship Overwatch. |
+| War Drummer | Medieval | Epic | Support aura for nearby towers, boosted by War Cry. Ult: Crescendo (every nearby tower fires at once). |
+| Valkyrie | Mythological | Legendary | Piercing javelins plus a Valhalla Dive that stuns the toughest enemy. Ult: Ride of the Valkyries. |
+| Nine-Tailed Kitsune | Magic | Legendary | Chaining foxfire that confuses enemies into walking backwards, plus fox decoys. Ult: Illusion Veil. |
+
+Tests: `test/newtroops.test.js` (first seven) and `test/newtroops2.test.js` (these eight).
+
+## Upgrade paths
+
+Every troop (all 73) has two upgrade paths, like Bloons: the **first upgrade picks Path A or Path B and locks the other for good**, then you take that path's remaining two steps up to level 4. Each path has its own name and three named steps; the panel shows the full path, what each step does, and the locked path.
+
+Path perks come from 15 recipes (Marksman, Executioner, Rapid, Blast, Stun, Chain, Freeze, Gold, Aura power/tempo, Arcana, Ultimate, Volley, Brawler, Armour-piercing) and work for any troop: crit chance, extra shots, damage to low-HP enemies and bosses, on-hit stun, gold per kill, ability and ultimate recharge, blast radius, slow, chains, armour piercing and aura strength. Each troop's two paths are chosen to suit it (`PATH_DEFS` in `index.html`). Upgrade costs are unchanged.
+
+In multiplayer the chosen path travels with the `upgrade` command and the server validates it (`path` must be 0 or 1 on the first upgrade; it is ignored afterwards, so the lock can't be bypassed). Test: `test/paths.test.js`.
+
+## Visual overhaul (Nov 2026)
+
+Graphics-only upgrade, no gameplay or networking code changed (all tests still pass, client/server hashes still match):
+
+* **Terrain**: painterly tonal mottling, ambient occlusion and a lit curb along every road, per-realm ground detail (grass blades, snow glints, marble veins, neon rain streaks), new shaded trees, pines, faceted rocks and detailed timber cottages.
+* **Battlefield**: stone plinths with rarity-coloured rings under every troop, gem-style upgrade pips, glossier enemy health bars.
+* **Interface**: new "Gilded Obsidian" skin (basalt panels, brass trim, parchment type) across menus, HUD, squad builder, cards and modals.
+* **Title scene**: detailed castle with flags and glowing windows, aurora, rim lighting.
+
+Everything lives in `public/index.html` (CSS block `#overhaul-css`, JS section "OVERHAUL"), so it can be removed cleanly.
